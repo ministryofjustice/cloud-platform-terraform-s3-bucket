@@ -8,7 +8,7 @@ output "iam_am_user" {
   value       = "${aws_iam_user.s3-account.name}"
 }
 
-output "access_keys_id" {
+output "access_key_id" {
   description = "Access keys id"
   value       = "${aws_iam_access_key.s3-account-access-keys.id}"
 }
@@ -25,7 +25,7 @@ output "bucket_arn" {
 
 output "bucket_name" {
   description = "bucket name"
-  value       = "${aws_s3_bucket.bucket.id}"
+  value       = "${aws_s3_bucket.bucket.bucket}"
 }
 
 output "user_arn" {

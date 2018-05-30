@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_iam_user" "s3-account" {
-  name = "${aws_s3_bucket.bucket.bucket}-s3-account"
+  name = "${aws_s3_bucket.bucket.bucket}-s3-system-account"
   path = "/teams/${var.team_name}/"
 }
 
@@ -32,23 +32,50 @@ resource "aws_iam_access_key" "s3-account-access-keys" {
 data "aws_iam_policy_document" "policy" {
   statement {
     actions = [
-      "s3:ListBucket",
-      "s3:GetBucketLocation",
+      "s3:GetBucketTagging",
+      "s3:DeleteObjectVersion",
+      "s3:GetObjectVersionTagging",
+      "s3:ListBucketVersions",
+      "s3:GetBucketLogging",
+      "s3:RestoreObject",
+      "s3:ReplicateObject",
+      "s3:GetObjectVersionTorrent",
+      "s3:GetObjectAcl",
+      "s3:GetEncryptionConfiguration",
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketRequestPayment",
+      "s3:GetObjectVersionAcl",
+      "s3:GetObjectTagging",
+      "s3:PutObjectTagging",
+      "s3:DeleteObject",
+      "s3:GetIpConfiguration",
+      "s3:DeleteObjectTagging",
+      "s3:ListBucketMultipartUploads",
+      "s3:GetBucketWebsite",
+      "s3:PutObjectVersionTagging",
+      "s3:DeleteObjectVersionTagging",
       "s3:GetBucketVersioning",
-      "s3:GetObject",
-      "s3:CreateBucket",
-      "s3:DeleteBucket",
+      "s3:GetBucketNotification",
+      "s3:ListMultipartUploadParts",
       "s3:PutObject",
+      "s3:GetObject",
+      "s3:GetObjectTorrent",
+      "s3:GetBucketCORS",
+      "s3:GetObjectVersionForReplication",
+      "s3:GetBucketLocation",
+      "s3:ReplicateDelete",
+      "s3:GetObjectVersion",
     ]
 
     resources = [
+      "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}",
       "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}/*",
     ]
   }
 }
 
 resource "aws_iam_policy" "policy" {
-  name        = "${var.team_name}-s3-policy"
+  name        = "${aws_s3_bucket.bucket.bucket}-s3-policy"
   path        = "/teams/${var.team_name}/"
   policy      = "${data.aws_iam_policy_document.policy.json}"
   description = "S3 policy for team ${var.team_name}"
