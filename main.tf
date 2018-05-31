@@ -78,7 +78,7 @@ resource "aws_iam_policy" "policy" {
   name        = "${aws_s3_bucket.bucket.bucket}-s3-policy"
   path        = "/teams/${var.team_name}/"
   policy      = "${data.aws_iam_policy_document.policy.json}"
-  description = "S3 policy for team ${var.team_name}"
+  description = "Policy for S3 bucket ${aws_s3_bucket.bucket.bucket}"
 }
 
 resource "aws_iam_policy_attachment" "attach-policy" {
