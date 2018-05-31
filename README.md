@@ -40,4 +40,24 @@ module "example_team_s3" {
 | secret_access_key | Secret key for s3 account |
 | user_arn | Arn for iam user |
 
+## tags 
+
+All infrastructure resources need to be tagged according to MOJ techincal guidence. The tags are stored as variables that you will need to fill out as part of your module.
+https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| application |  | string | - | yes |
+| business-unit |  | string | - | yes |
+| component |  | string | - | yes |
+| environment-name |  | string | - | yes |
+| infrastructure-support |  | string | - | yes |
+| is-production |  | string | `false` | no |
+| owner |  | string | - | yes |
+| runbook |  | string | - | yes |
+| source-code |  | string | - | yes |
+
+
+
+
 

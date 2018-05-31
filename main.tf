@@ -18,6 +18,18 @@ resource "aws_s3_bucket" "s3bucket" {
   versioning {
     enabled = "${var.versioning}"
   }
+
+  tags {
+    business-unit          = "${var.business-unit}"
+    application            = "${var.application}"
+    component              = "${var.component}"
+    is-production          = "${var.is-production}"
+    environment-name       = "${var.environment-name}"
+    owner                  = "${var.owner}"
+    infrastructure-support = "${var.infrastructure-support}"
+    runbook                = "${var.runbook}"
+    source-code            = "${var.source-code}"
+  }
 }
 
 resource "aws_iam_user" "s3-account" {

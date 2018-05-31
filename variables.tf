@@ -11,5 +11,25 @@ variable "acl" {
 
 variable "versioning" {
   description = "version objects stored within your bucket. "
-  default     = "false"
+  default     = false
 }
+
+variable "business-unit" {}
+
+variable "application" {}
+
+variable "component" {}
+
+variable "is-production" {
+  default = false
+}
+
+variable "environment-name" {}
+
+variable "owner" {}
+
+variable "infrastructure-support" {}
+
+variable "runbook" {}
+
+variable "source-code" {}
