@@ -1,11 +1,15 @@
 variable "team_name" {}
 
-variable "bucket_identifier" {}
+variable "bucket_identifier" {
+  description = "This is the bucket identifier, the bucket name will be this prefixed with your team name"
+}
 
 variable "acl" {
-  default = "private"
+  description = "acl manages access to your bucket"
+  default     = "private"
 }
 
 variable "versioning" {
-  default = "false"
+  description = "version objects stored within your bucket. "
+  default     = "false"
 }

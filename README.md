@@ -19,18 +19,14 @@ module "example_team_s3" {
 }
 ```
 
-
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| acl |  | string | `private` | no |
-| bucket_identifier |  | string | - | yes |
+| acl | acl manages access to your bucket | string | `private` | no |
+| bucket_identifier | This is the bucket identifier, the bucket name will be this prefixed with your team name | string | - | yes |
 | team_name |  | string | - | yes |
-| versioning |  | string | `false` | no |
-
-canned acl = https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
-versioning = https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+| versioning | version objects stored within your bucket. | string | `false` | no |
 
 ## Outputs
 
@@ -43,4 +39,5 @@ versioning = https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
 | policy_arn | ARN for the new policy |
 | secret_access_key | Secret key for s3 account |
 | user_arn | Arn for iam user |
+
 

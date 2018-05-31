@@ -5,8 +5,8 @@ provider "aws" {
 module "example_team_s3" {
   source = "../"
 
-  team_name   = "example-repo"
+  team_name         = "example-repo"
   bucket_identifier = "example-bucket"
-  acl         = "public-read"
-  versioning  = "true"
+  acl               = "public-read"
+  versioning        = "true"
 }
