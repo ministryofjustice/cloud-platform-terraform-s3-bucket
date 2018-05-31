@@ -1,6 +1,6 @@
 variable "team_name" {}
 
-variable "bucket_name" {}
+variable "bucket_identifier" {}
 
 variable "acl" {
   default = "private"

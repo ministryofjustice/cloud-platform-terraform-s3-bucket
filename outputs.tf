@@ -3,29 +3,29 @@ output "policy_arn" {
   value       = "${aws_iam_policy.policy.arn}"
 }
 
-output "iam_am_user" {
+output "iam_user_name" {
   description = "user name for s3 service account"
   value       = "${aws_iam_user.s3-account.name}"
 }
 
 output "access_key_id" {
-  description = "Access keys id"
-  value       = "${aws_iam_access_key.s3-account-access-keys.id}"
+  description = "Access key id for s3 account"
+  value       = "${aws_iam_access_key.s3-account-access-key.id}"
 }
 
 output "secret_access_key" {
   description = "Secret key for s3 account"
-  value       = "${aws_iam_access_key.s3-account-access-keys.secret}"
+  value       = "${aws_iam_access_key.s3-account-access-key.secret}"
 }
 
 output "bucket_arn" {
   description = "Arn for s3 bucket created"
-  value       = "${aws_s3_bucket.bucket.arn}"
+  value       = "${aws_s3_bucket.s3bucket.arn}"
 }
 
 output "bucket_name" {
   description = "bucket name"
-  value       = "${aws_s3_bucket.bucket.bucket}"
+  value       = "${aws_s3_bucket.s3bucket.bucket}"
 }
 
 output "user_arn" {

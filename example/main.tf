@@ -6,7 +6,7 @@ module "example_team_s3" {
   source = "../"
 
   team_name   = "example-repo"
-  bucket_name = "example-bucket"
-  acl         = "public"
+  bucket_identifier = "example-bucket"
+  acl         = "public-read"
   versioning  = "true"
 }
