@@ -1,8 +1,8 @@
-# cloud-platform-terraform-s3 module
+# cloud-platform-terraform-s3-bucket module
 
 Terraform module that will create an S3 bucket in AWS with relevant user account that will have access to bucket.
 
-The bucket created will use $team_name-$bucket_identifier as the bucket name to ensure the bucket created is globally unique and avoid name clashes with buckets.
+The bucket created will use ${team_name}-${bucket_identifier} as the bucket name to ensure that the bucket created is globally unique and avoid name clashes.
 
 ## Usage
 
@@ -10,12 +10,10 @@ The bucket created will use $team_name-$bucket_identifier as the bucket name to 
 module "example_team_s3" {
   source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=master"
 
-  team_name   = "example-repo"
-  bucket_name = "example-bucket"
-  acl         = "public-read"
-  versioning  = "true"
-
-
+  team_name         = "example-repo"
+  bucket_identifier = "example-bucket"
+  acl               = "public-read"
+  versioning        = "true"
 }
 ```
 

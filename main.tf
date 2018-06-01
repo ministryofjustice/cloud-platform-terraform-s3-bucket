@@ -22,13 +22,10 @@ resource "aws_s3_bucket" "s3bucket" {
   tags {
     business-unit          = "${var.business-unit}"
     application            = "${var.application}"
-    component              = "${var.component}"
     is-production          = "${var.is-production}"
     environment-name       = "${var.environment-name}"
-    owner                  = "${var.owner}"
+    owner                  = "${var.team_name}"
     infrastructure-support = "${var.infrastructure-support}"
-    runbook                = "${var.runbook}"
-    source-code            = "${var.source-code}"
   }
 }
 
