@@ -41,8 +41,6 @@ https://ministryofjustice.github.io/technical-guidance/standards/documenting-inf
 | environment-name |  | string | - | yes |
 | infrastructure-support | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | string | - | yes |
 | is-production |  | string | `false` | no |
-| team_name |  | string | - | yes |
-
 
 
 ## Outputs
