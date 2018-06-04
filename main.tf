@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "s3bucket" {
-  bucket        = "${var.team_name}-${var.bucket_identifier}"
+  bucket        = "${var.business-unit}-${var.team_name}-${var.bucket_identifier}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"

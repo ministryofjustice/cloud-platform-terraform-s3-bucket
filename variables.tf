@@ -11,10 +11,13 @@ variable "acl" {
 
 variable "versioning" {
   description = "version objects stored within your bucket. "
-  default     = false
+  default     = "false"
 }
 
-variable "business-unit" {}
+variable "business-unit" {
+  description = " Area of the MOJ responsible for the service"
+  default     = "mojdigital"
+}
 
 variable "application" {}
 
@@ -24,4 +27,6 @@ variable "is-production" {
 
 variable "environment-name" {}
 
-variable "infrastructure-support" {}
+variable "infrastructure-support" {
+  description = "The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>)"
+}

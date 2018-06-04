@@ -2,7 +2,9 @@
 
 Terraform module that will create an S3 bucket in AWS with relevant user account that will have access to bucket.
 
-The bucket created will use ${team_name}-${bucket_identifier} as the bucket name to ensure that the bucket created is globally unique and avoid name clashes.
+The bucket created will prefix the business unit tag and your team name as the bucket name. This ensures that the bucket created is globally unique and avoids name clashes.
+
+bucket name = ${business-unit}-${team_name}-${bucket_identifier} 
 
 ## Usage
 
@@ -26,6 +28,23 @@ module "example_team_s3" {
 | team_name |  | string | - | yes |
 | versioning | version objects stored within your bucket. | string | `false` | no |
 
+### Tags 
+
+Some of the inputs are tags. All infrastructure resources need to be tagged according to MOJ techincal guidence. The tags are stored as variables that you will need to fill out as part of your module.
+
+https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure
+
+| Name | Description | Type | Default | Required |
+|------|-------------|:----:|:-----:|:-----:|
+| application |  | string | - | yes |
+| business-unit | Area of the MOJ responsible for the service | string | `mojdigital` | no |
+| environment-name |  | string | - | yes |
+| infrastructure-support | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | string | - | yes |
+| is-production |  | string | `false` | no |
+| team_name |  | string | - | yes |
+
+
+
 ## Outputs
 
 | Name | Description |
@@ -38,22 +57,7 @@ module "example_team_s3" {
 | secret_access_key | Secret key for s3 account |
 | user_arn | Arn for iam user |
 
-## tags 
 
-All infrastructure resources need to be tagged according to MOJ techincal guidence. The tags are stored as variables that you will need to fill out as part of your module.
-https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure
-
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| application |  | string | - | yes |
-| business-unit |  | string | - | yes |
-| component |  | string | - | yes |
-| environment-name |  | string | - | yes |
-| infrastructure-support |  | string | - | yes |
-| is-production |  | string | `false` | no |
-| owner |  | string | - | yes |
-| runbook |  | string | - | yes |
-| source-code |  | string | - | yes |
 
 
 
