@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-resource "aws_s3_bucket" "bucket" {
-  bucket        = "${var.team_name}-${var.bucket_name}"
+resource "aws_s3_bucket" "s3bucket" {
+  bucket        = "${var.business-unit}-${var.team_name}-${var.bucket_identifier}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"
@@ -18,14 +18,23 @@ resource "aws_s3_bucket" "bucket" {
   versioning {
     enabled = "${var.versioning}"
   }
+
+  tags {
+    business-unit          = "${var.business-unit}"
+    application            = "${var.application}"
+    is-production          = "${var.is-production}"
+    environment-name       = "${var.environment-name}"
+    owner                  = "${var.team_name}"
+    infrastructure-support = "${var.infrastructure-support}"
+  }
 }
 
 resource "aws_iam_user" "s3-account" {
-  name = "${aws_s3_bucket.bucket.bucket}-s3-system-account"
+  name = "${aws_s3_bucket.s3bucket.bucket}-s3-system-account"
   path = "/teams/${var.team_name}/"
 }
 
-resource "aws_iam_access_key" "s3-account-access-keys" {
+resource "aws_iam_access_key" "s3-account-access-key" {
   user = "${aws_iam_user.s3-account.name}"
 }
 
@@ -68,17 +77,17 @@ data "aws_iam_policy_document" "policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}",
-      "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}/*",
+      "arn:aws:s3:::${aws_s3_bucket.s3bucket.bucket}",
+      "arn:aws:s3:::${aws_s3_bucket.s3bucket.bucket}/*",
     ]
   }
 }
 
 resource "aws_iam_policy" "policy" {
-  name        = "${aws_s3_bucket.bucket.bucket}-s3-policy"
+  name        = "${aws_s3_bucket.s3bucket.bucket}-s3-policy"
   path        = "/teams/${var.team_name}/"
   policy      = "${data.aws_iam_policy_document.policy.json}"
-  description = "Policy for S3 bucket ${aws_s3_bucket.bucket.bucket}"
+  description = "Policy for S3 bucket ${aws_s3_bucket.s3bucket.bucket}"
 }
 
 resource "aws_iam_policy_attachment" "attach-policy" {
