@@ -2,9 +2,11 @@
 
 Terraform module that will create an S3 bucket in AWS with relevant user account that will have access to bucket.
 
-The bucket created will prefix the business unit tag and your team name as the bucket name. This ensures that the bucket created is globally unique and avoids name clashes.
+The bucket created will prefix the business unit tag and your team name to the bucket identifier to create the bucket name. This ensures that the bucket created is globally unique and avoids name clashes.
 
+```bash
 bucket name = ${business-unit}-${team_name}-${bucket_identifier} 
+```
 
 ## Usage
 
@@ -26,7 +28,7 @@ module "example_team_s3" {
 | acl | acl manages access to your bucket | string | `private` | no |
 | bucket_identifier | This is the bucket identifier, the bucket name will be this prefixed with your team name | string | - | yes |
 | team_name |  | string | - | yes |
-| versioning | version objects stored within your bucket. | string | `false` | no |
+| versioning | version objects stored within your bucket. | boolean | false | no |
 
 ### Tags 
 
@@ -37,10 +39,10 @@ https://ministryofjustice.github.io/technical-guidance/standards/documenting-inf
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | application |  | string | - | yes |
-| business-unit | Area of the MOJ responsible for the service | string | `mojdigital` | no |
+| business-unit | Area of the MOJ responsible for the service | string | `mojdigital` | yes |
 | environment-name |  | string | - | yes |
-| infrastructure-support | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | string | - | yes |
-| is-production |  | string | `false` | no |
+| infrastructure-support | The team responsible for managing the infrastructure. Should be of the form team-email | string | - | yes |
+| is-production |  | string | `false` | yes |
 
 
 ## Outputs

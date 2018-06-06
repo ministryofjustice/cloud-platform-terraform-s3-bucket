@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "example_team_s3" {
-  source = "../"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket"
 
   team_name              = "cloudplatform"
   bucket_identifier      = "example-bucket"

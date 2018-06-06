@@ -11,7 +11,7 @@ variable "acl" {
 
 variable "versioning" {
   description = "version objects stored within your bucket. "
-  default     = "false"
+  default     = false
 }
 
 variable "business-unit" {
@@ -22,7 +22,7 @@ variable "business-unit" {
 variable "application" {}
 
 variable "is-production" {
-  default = false
+  default = "false"
 }
 
 variable "environment-name" {}
