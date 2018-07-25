@@ -1,9 +1,5 @@
 variable "team_name" {}
 
-variable "bucket_identifier" {
-  description = "This is the bucket identifier, the bucket name will be this prefixed with your team name"
-}
-
 variable "acl" {
   description = "acl manages access to your bucket"
   default     = "private"

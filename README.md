@@ -2,11 +2,7 @@
 
 Terraform module that will create an S3 bucket in AWS with relevant user account that will have access to bucket.
 
-The bucket created will prefix the business unit tag and your team name to the bucket identifier to create the bucket name. This ensures that the bucket created is globally unique and avoids name clashes.
-
-```bash
-bucket name = ${business-unit}-${team_name}-${bucket_identifier}
-```
+The bucket created will have a randomised name of the format `cloud-platform-7a5c4a2a7e2134a`. This ensures that the bucket created is globally unique.
 
 ## Usage
 
@@ -15,7 +11,6 @@ module "example_team_s3" {
   source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=master"
 
   team_name         = "example-repo"
-  bucket_identifier = "example-bucket"
   acl               = "public-read"
   versioning        =  true
 }
@@ -26,8 +21,6 @@ module "example_team_s3" {
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | acl | acl manages access to your bucket | string | `private` | no |
-| bucket_identifier | This is the bucket identifier, the bucket name will be this prefixed with your team name | string | - | yes |
-| team_name |  | string | - | yes |
 | versioning | version objects stored within your bucket. | boolean | false | no |
 
 ### Tags
@@ -43,6 +36,7 @@ https://ministryofjustice.github.io/technical-guidance/standards/documenting-inf
 | environment-name |  | string | - | yes |
 | infrastructure-support | The team responsible for managing the infrastructure. Should be of the form team-email | string | - | yes |
 | is-production |  | string | `false` | yes |
+| team_name |  | string | - | yes |
 
 
 ## Outputs

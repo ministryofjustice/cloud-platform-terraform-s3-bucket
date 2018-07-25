@@ -1,8 +1,12 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+resource "random_id" "bucket" {
+  byte_length = 16
+}
+
 resource "aws_s3_bucket" "bucket" {
-  bucket        = "${var.business-unit}-${var.team_name}-${var.bucket_identifier}"
+  bucket        = "cloud-platform-${random_id.bucket.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"
