@@ -52,6 +52,4 @@ https://ministryofjustice.github.io/technical-guidance/standards/documenting-inf
 | access_key_id | Access key id for s3 account |
 | bucket_arn | Arn for s3 bucket created |
 | bucket_name | bucket name |
-| iam_user_name | user name for s3 service account |
 | secret_access_key | Secret key for s3 account |
-| user_arn | Arn for iam user |
