@@ -81,8 +81,8 @@ data "aws_iam_policy_document" "policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}",
-      "arn:aws:s3:::${aws_s3_bucket.bucket.bucket}/*",
+      "arn:aws:s3:::${aws_s3_bucket.bucket.id}",
+      "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*",
     ]
   }
 }
