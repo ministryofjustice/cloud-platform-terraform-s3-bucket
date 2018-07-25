@@ -10,9 +10,14 @@ The bucket created will have a randomised name of the format `cloud-platform-7a5
 module "example_team_s3" {
   source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=master"
 
-  team_name         = "example-repo"
-  acl               = "public-read"
-  versioning        =  true
+  team_name              = "example-repo"
+  acl                    = "public-read"
+  versioning             =  true
+  business-unit          = "example-bu"
+  application            = "example-app"
+  is-production          = "false"
+  environment-name       = "development"
+  infrastructure-support = "example-team@digtal.justice.gov.uk"
 }
 ```
 
