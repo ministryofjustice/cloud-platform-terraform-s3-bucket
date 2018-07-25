@@ -1,8 +1,3 @@
-output "policy_arn" {
-  description = "ARN for the new policy"
-  value       = "${module.example_team_s3.policy_arn}"
-}
-
 output "iam_user_name" {
   description = "User name for s3 service account"
   value       = "${module.example_team_s3.iam_user_name}"

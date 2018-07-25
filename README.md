@@ -5,7 +5,7 @@ Terraform module that will create an S3 bucket in AWS with relevant user account
 The bucket created will prefix the business unit tag and your team name to the bucket identifier to create the bucket name. This ensures that the bucket created is globally unique and avoids name clashes.
 
 ```bash
-bucket name = ${business-unit}-${team_name}-${bucket_identifier} 
+bucket name = ${business-unit}-${team_name}-${bucket_identifier}
 ```
 
 ## Usage
@@ -30,7 +30,7 @@ module "example_team_s3" {
 | team_name |  | string | - | yes |
 | versioning | version objects stored within your bucket. | boolean | false | no |
 
-### Tags 
+### Tags
 
 Some of the inputs are tags. All infrastructure resources need to be tagged according to MOJ techincal guidence. The tags are stored as variables that you will need to fill out as part of your module.
 
@@ -53,13 +53,5 @@ https://ministryofjustice.github.io/technical-guidance/standards/documenting-inf
 | bucket_arn | Arn for s3 bucket created |
 | bucket_name | bucket name |
 | iam_user_name | user name for s3 service account |
-| policy_arn | ARN for the new policy |
 | secret_access_key | Secret key for s3 account |
 | user_arn | Arn for iam user |
-
-
-
-
-
-
-

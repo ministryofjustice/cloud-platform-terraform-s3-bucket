@@ -83,15 +83,8 @@ data "aws_iam_policy_document" "policy" {
   }
 }
 
-resource "aws_iam_policy" "policy" {
-  name        = "${aws_s3_bucket.s3bucket.bucket}-s3-policy"
-  path        = "/teams/${var.team_name}/"
-  policy      = "${data.aws_iam_policy_document.policy.json}"
-  description = "Policy for S3 bucket ${aws_s3_bucket.s3bucket.bucket}"
-}
-
-resource "aws_iam_policy_attachment" "attach-policy" {
-  name       = "attached-policy"
-  users      = ["${aws_iam_user.s3-account.name}"]
-  policy_arn = "${aws_iam_policy.policy.arn}"
+resource "aws_iam_user_policy" "policy" {
+  name   = "s3-bucket-read-write"
+  policy = "${data.aws_iam_policy_document.policy.json}"
+  user   = "${aws_iam_user.s3-account.name}"
 }

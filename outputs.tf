@@ -1,8 +1,3 @@
-output "policy_arn" {
-  description = "ARN for the new policy"
-  value       = "${aws_iam_policy.policy.arn}"
-}
-
 output "iam_user_name" {
   description = "user name for s3 service account"
   value       = "${aws_iam_user.s3-account.name}"
