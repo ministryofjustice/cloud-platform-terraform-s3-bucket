@@ -29,9 +29,13 @@ resource "aws_s3_bucket" "s3bucket" {
   }
 }
 
+resource "random_id" "user" {
+  byte_length = 8
+}
+
 resource "aws_iam_user" "s3-account" {
-  name = "${aws_s3_bucket.s3bucket.bucket}-s3-system-account"
-  path = "/teams/${var.team_name}/"
+  name = "s3-bucket-user-${random_id.user.hex}"
+  path = "/system/s3-bucket-user/${var.team_name}/"
 }
 
 resource "aws_iam_access_key" "s3-account-access-key" {
