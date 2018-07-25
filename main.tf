@@ -1,12 +1,12 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-resource "random_id" "bucket" {
+resource "random_id" "id" {
   byte_length = 16
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket        = "cloud-platform-${random_id.bucket.hex}"
+  bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"
@@ -33,12 +33,8 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "random_id" "user" {
-  byte_length = 8
-}
-
 resource "aws_iam_user" "user" {
-  name = "s3-bucket-user-${random_id.user.hex}"
+  name = "s3-bucket-user-${random_id.id.hex}"
   path = "/system/s3-bucket-user/${var.team_name}/"
 }
 
