@@ -1,8 +1,12 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-resource "aws_s3_bucket" "s3bucket" {
-  bucket        = "${var.business-unit}-${var.team_name}-${var.bucket_identifier}"
+resource "random_id" "id" {
+  byte_length = 16
+}
+
+resource "aws_s3_bucket" "bucket" {
+  bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"
@@ -29,13 +33,13 @@ resource "aws_s3_bucket" "s3bucket" {
   }
 }
 
-resource "aws_iam_user" "s3-account" {
-  name = "${aws_s3_bucket.s3bucket.bucket}-s3-system-account"
-  path = "/teams/${var.team_name}/"
+resource "aws_iam_user" "user" {
+  name = "s3-bucket-user-${random_id.id.hex}"
+  path = "/system/s3-bucket-user/${var.team_name}/"
 }
 
-resource "aws_iam_access_key" "s3-account-access-key" {
-  user = "${aws_iam_user.s3-account.name}"
+resource "aws_iam_access_key" "user" {
+  user = "${aws_iam_user.user.name}"
 }
 
 data "aws_iam_policy_document" "policy" {
@@ -77,21 +81,14 @@ data "aws_iam_policy_document" "policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.s3bucket.bucket}",
-      "arn:aws:s3:::${aws_s3_bucket.s3bucket.bucket}/*",
+      "arn:aws:s3:::${aws_s3_bucket.bucket.id}",
+      "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*",
     ]
   }
 }
 
-resource "aws_iam_policy" "policy" {
-  name        = "${aws_s3_bucket.s3bucket.bucket}-s3-policy"
-  path        = "/teams/${var.team_name}/"
-  policy      = "${data.aws_iam_policy_document.policy.json}"
-  description = "Policy for S3 bucket ${aws_s3_bucket.s3bucket.bucket}"
-}
-
-resource "aws_iam_policy_attachment" "attach-policy" {
-  name       = "attached-policy"
-  users      = ["${aws_iam_user.s3-account.name}"]
-  policy_arn = "${aws_iam_policy.policy.arn}"
+resource "aws_iam_user_policy" "policy" {
+  name   = "s3-bucket-read-write"
+  policy = "${data.aws_iam_policy_document.policy.json}"
+  user   = "${aws_iam_user.user.name}"
 }
