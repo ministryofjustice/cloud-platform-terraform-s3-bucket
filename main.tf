@@ -6,7 +6,7 @@ resource "random_id" "id" {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket        = "cloud-platform-${random_id.id.hex}"
+  bucket        = "${var.application}-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${data.aws_region.current.name}"
