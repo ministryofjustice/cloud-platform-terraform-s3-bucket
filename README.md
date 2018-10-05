@@ -1,6 +1,6 @@
 # cloud-platform-terraform-s3-bucket module
 
-Terraform module that will create an S3 bucket in AWS with relevant user account that will have access to bucket.
+Terraform module that will create an S3 bucket in AWS and a relevant user account that will have access to bucket.
 
 The bucket created will have a randomised name of the format `cloud-platform-7a5c4a2a7e2134a`. This ensures that the bucket created is globally unique.
 
@@ -8,7 +8,7 @@ The bucket created will have a randomised name of the format `cloud-platform-7a5
 
 ```hcl
 module "example_team_s3" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=master"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket"
 
   team_name              = "example-repo"
   acl                    = "public-read"
@@ -30,9 +30,7 @@ module "example_team_s3" {
 
 ### Tags
 
-Some of the inputs are tags. All infrastructure resources need to be tagged according to MOJ techincal guidence. The tags are stored as variables that you will need to fill out as part of your module.
-
-https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure
+Some of the inputs are tags. All infrastructure resources need to be tagged according to the [MOJ techincal guidence](https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure). The tags are stored as variables that you will need to fill out as part of your module.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
