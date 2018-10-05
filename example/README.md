@@ -4,7 +4,7 @@ The configuration in this directory creates an example AWS S3 Bucket.
 
 This example is designed to be used in the [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments/) repository.
 
-The output will be in a kubernetes `Secret`, which includes the the values of `access_key_id`, `secret_access_key`, `bucket_arn` and `bucket_name`.
+The output will be in a kubernetes `Secret`, which includes the values of `access_key_id`, `secret_access_key`, `bucket_arn` and `bucket_name`.
 
 ## Usage
 
