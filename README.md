@@ -18,6 +18,7 @@ module "example_team_s3" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "example-team@digtal.justice.gov.uk"
+  aws-s3-region          = "eu-west-1"
 }
 ```
 

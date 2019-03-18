@@ -26,3 +26,8 @@ variable "versioning" {
   description = "version objects stored within your bucket. "
   default     = false
 }
+
+variable "aws-s3-region" {
+  description= "Region into whicn the bucket will be created"
+  default = "eu-west-1"
+}
