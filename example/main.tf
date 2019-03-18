@@ -1,6 +1,4 @@
-terraform {
-  backend "s3" {}
-}
+
 
 provider "aws" {
   region = "eu-west-1"
@@ -21,6 +19,7 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+  aws-s3-region          = "eu-west-2"
 }
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
