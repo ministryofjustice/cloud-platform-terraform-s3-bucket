@@ -13,7 +13,7 @@ provider "aws" {
  *
  */
 module "example_team_s3_bucket" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=1.0"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=2.0"
 
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
@@ -21,6 +21,7 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+  aws-s3-region          = "eu-west-2"
 }
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
