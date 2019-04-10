@@ -22,12 +22,17 @@ variable "acl" {
   default     = "private"
 }
 
+variable "bucket_policy" {
+  description = "The S3 bucket policy to set. If empty, no policy will be set"
+  default     = ""
+}
+
 variable "versioning" {
   description = "version objects stored within your bucket. "
   default     = false
 }
 
 variable "aws-s3-region" {
-  description= "Region into whicn the bucket will be created"
-  default = "eu-west-1"
+  description = "Region into whicn the bucket will be created"
+  default     = "eu-west-1"
 }

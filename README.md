@@ -27,7 +27,8 @@ module "example_team_s3" {
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | acl | acl manages access to your bucket | string | `private` | no |
-| versioning | version objects stored within your bucket. | boolean | false | no |
+| bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
+| versioning | version objects stored within your bucket. | boolean | `false` | no |
 
 ### Tags
 

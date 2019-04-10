@@ -16,6 +16,7 @@ resource "aws_s3_bucket" "bucket" {
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${var.aws-s3-region}"
+  policy        = "${var.bucket_policy}"
 
   server_side_encryption_configuration {
     rule {
