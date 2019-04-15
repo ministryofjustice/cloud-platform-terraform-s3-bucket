@@ -5,7 +5,7 @@ variable "application" {}
 variable "environment-name" {}
 
 variable "business-unit" {
-  description = " Area of the MOJ responsible for the service"
+  description = "Area of the MOJ responsible for the service"
   default     = "mojdigital"
 }
 
@@ -18,7 +18,7 @@ variable "infrastructure-support" {
 }
 
 variable "acl" {
-  description = "acl manages access to your bucket"
+  description = "The bucket ACL to set"
   default     = "private"
 }
 
@@ -28,11 +28,11 @@ variable "bucket_policy" {
 }
 
 variable "versioning" {
-  description = "version objects stored within your bucket. "
+  description = "Enable object versioning for the bucket"
   default     = false
 }
 
 variable "aws-s3-region" {
-  description = "Region into whicn the bucket will be created"
+  description = "Region into which the bucket will be created"
   default     = "eu-west-2"
 }
