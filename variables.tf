@@ -34,5 +34,5 @@ variable "versioning" {
 
 variable "aws-s3-region" {
   description = "Region into whicn the bucket will be created"
-  default     = "eu-west-1"
+  default     = "eu-west-2"
 }
