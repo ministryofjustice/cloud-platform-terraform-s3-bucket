@@ -10,13 +10,21 @@ resource "random_id" "id" {
   byte_length = 16
 }
 
+data "template_file" "bucket_policy" {
+  template = "${var.bucket_policy}"
+
+  vars {
+    bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
+  }
+}
+
 resource "aws_s3_bucket" "bucket" {
   provider      = "aws.destination"
   bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
   region        = "${var.aws-s3-region}"
-  policy        = "${var.bucket_policy}"
+  policy        = "${data.template_file.bucket_policy.rendered}"
 
   server_side_encryption_configuration {
     rule {
