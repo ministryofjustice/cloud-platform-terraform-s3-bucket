@@ -14,6 +14,33 @@ module "example_team_s3_bucket" {
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
   aws-s3-region          = "eu-west-2"
+
+  /*
+   * This is an example of a bucket policy. It is treated as a template so that
+   * variable can be used to avoid hardcoding values. Currently, the only
+   * available variable is `$${bucket_arn}`.
+   *
+
+  bucket_policy = <<EOF
+{
+  "Version":"2012-10-17",
+  "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::012345678901:user/foobar"
+            },
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "$${bucket_arn}/*"
+            ]
+        }
+    ]
+}
+EOF
+  */
 }
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
