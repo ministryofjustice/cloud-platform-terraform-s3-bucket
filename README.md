@@ -28,6 +28,7 @@ module "example_team_s3" {
 |------|-------------|:----:|:-----:|:-----:|
 | acl | acl manages access to your bucket | string | `private` | no |
 | bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
+| bucket_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
 | versioning | version objects stored within your bucket. | boolean | `false` | no |
 
 ### Tags
