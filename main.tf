@@ -18,6 +18,14 @@ data "template_file" "bucket_policy" {
   }
 }
 
+data "template_file" "user_policy" {
+  template = "${var.user_policy}"
+
+  vars {
+    bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
+  }
+}
+
 resource "aws_s3_bucket" "bucket" {
   provider      = "aws.destination"
   bucket        = "cloud-platform-${random_id.id.hex}"
@@ -104,6 +112,6 @@ data "aws_iam_policy_document" "policy" {
 
 resource "aws_iam_user_policy" "policy" {
   name   = "s3-bucket-read-write"
-  policy = "${data.aws_iam_policy_document.policy.json}"
+  policy = "${data.template_file.user_policy.rendered == "" ? data.aws_iam_policy_document.policy.json : data.template_file.user_policy.rendered}"
   user   = "${aws_iam_user.user.name}"
 }

@@ -16,31 +16,67 @@ module "example_team_s3_bucket" {
   aws-s3-region          = "eu-west-2"
 
   /*
-   * This is an example of a bucket policy. It is treated as a template so that
-   * variable can be used to avoid hardcoding values. Currently, the only
-   * available variable is `$${bucket_arn}`.
+   * The following are exampls of bucket and user policies. They are treated as
+   * templates. Currently, the only available variable is `$${bucket_arn}`.
    *
+   */
 
-  bucket_policy = <<EOF
+  /*
+ * Allow a user (foobar) from another account (012345678901) to get objects from
+ * this bucket.
+ *
+
+   bucket_policy = <<EOF
 {
-  "Version":"2012-10-17",
+  "Version": "2012-10-17",
   "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::012345678901:user/foobar"
-            },
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "$${bucket_arn}/*"
-            ]
-        }
-    ]
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::012345678901:user/foobar"
+      },
+      "Action": [
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "$${bucket_arn}/*"
+      ]
+    }
+  ]
 }
 EOF
-  */
+
+*/
+
+  /*
+ * Override the default policy for the generated machine user of this bucket.
+ *
+
+user_policy = <<EOF
+{
+"Version": "2012-10-17",
+"Statement": [
+  {
+    "Sid": "",
+    "Effect": "Allow",
+    "Action": [
+      "s3:GetBucketLocation"
+    ],
+    "Resource": "$${bucket_arn}"
+  },
+  {
+    "Sid": "",
+    "Effect": "Allow",
+    "Action": [
+      "s3:GetObject"
+    ],
+    "Resource": "$${bucket_arn}/*"
+  }
+]
+}
+EOF
+
+*/
 }
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
