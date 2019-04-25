@@ -1,11 +1,6 @@
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-provider "aws" {
-  alias  = "destination"
-  region = "${var.aws-s3-region}"
-}
-
 resource "random_id" "id" {
   byte_length = 16
 }
@@ -27,7 +22,7 @@ data "template_file" "user_policy" {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  provider      = "aws.destination"
+  provider      = "aws.module"
   bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
