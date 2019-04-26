@@ -22,11 +22,9 @@ data "template_file" "user_policy" {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  provider      = "aws.module"
   bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = "${var.acl}"
   force_destroy = "true"
-  region        = "${var.aws-s3-region}"
   policy        = "${data.template_file.bucket_policy.rendered}"
 
   server_side_encryption_configuration {
@@ -48,7 +46,6 @@ resource "aws_s3_bucket" "bucket" {
     environment-name       = "${var.environment-name}"
     owner                  = "${var.team_name}"
     infrastructure-support = "${var.infrastructure-support}"
-    aws-s3-region          = "${var.aws-s3-region}"
   }
 }
 
