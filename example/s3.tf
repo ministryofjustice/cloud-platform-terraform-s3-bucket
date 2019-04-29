@@ -5,7 +5,7 @@
  *
  */
 module "example_team_s3_bucket" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=2.0"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=3.2"
 
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
@@ -13,7 +13,11 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
-  aws-s3-region          = "eu-west-2"
+
+  providers = {
+    # Can be either "aws.london" or "aws.ireland"
+    aws = "aws.ireland"
+  }
 
   /*
    * The following are exampls of bucket and user policies. They are treated as
