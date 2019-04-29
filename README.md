@@ -6,6 +6,10 @@ The bucket created will have a randomised name of the format `cloud-platform-7a5
 
 ## Usage
 
+**This module will create the resources in the region of the providers specified in the *providers* input.  
+Be sure to create the relevant providers, see example/main.tf  
+From module version 3.2, this replaces the use of the `aws-s3-region`.**
+
 ```hcl
 module "example_team_s3" {
   source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket"
@@ -18,7 +22,12 @@ module "example_team_s3" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "example-team@digtal.justice.gov.uk"
+
+  # This is a new input. 
+  providers = {
+    aws = "aws.london"
   }
+}
 ```
 
 ## Inputs
@@ -29,6 +38,7 @@ module "example_team_s3" {
 | bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
 | bucket_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
 | versioning | version objects stored within your bucket. | boolean | `false` | no |
+| providers | provider to use | array of string | default provider | no
 
 ### Tags
 
