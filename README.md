@@ -1,13 +1,15 @@
 # cloud-platform-terraform-s3-bucket module
 
+![version](https://img.shields.io/badge/version-3.2-green.svg?cacheSeconds=2592000)
+
 Terraform module that will create an S3 bucket in AWS and a relevant user account that will have access to bucket.
 
 The bucket created will have a randomised name of the format `cloud-platform-7a5c4a2a7e2134a`. This ensures that the bucket created is globally unique.
 
 ## Usage
 
-**This module will create the resources in the region of the providers specified in the *providers* input.  
-Be sure to create the relevant providers, see example/main.tf  
+**This module will create the resources in the region of the providers specified in the *providers* input.
+Be sure to create the relevant providers, see example/main.tf
 From module version 3.2, this replaces the use of the `aws-s3-region`.**
 
 ```hcl
@@ -23,7 +25,7 @@ module "example_team_s3" {
   environment-name       = "development"
   infrastructure-support = "example-team@digtal.justice.gov.uk"
 
-  # This is a new input. 
+  # This is a new input.
   providers = {
     aws = "aws.london"
   }
