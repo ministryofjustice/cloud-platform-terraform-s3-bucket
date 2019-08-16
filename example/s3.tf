@@ -5,7 +5,7 @@
  *
  */
 module "example_team_s3_bucket" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=3.2"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=3.3"
 
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
@@ -16,8 +16,47 @@ module "example_team_s3_bucket" {
 
   providers = {
     # Can be either "aws.london" or "aws.ireland"
-    aws = "aws.ireland"
+    aws = "aws.london"
   }
+
+  /*
+   * The following example can be used if you need to set a lifecycle for your s3. 
+   *  Follow the guidance here "https://www.terraform.io/docs/providers/aws/r/s3_bucket.html#using-object-lifecycle"
+   *  "https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html"
+   *  
+
+  lifecycle_rule = [
+    {
+      enabled = true
+      id      = "retire exports after 7 days"
+      prefix  = "surveys/export"
+
+      noncurrent_version_expiration = [
+        {
+          days = 7
+        },
+      ]
+
+      expiration = [
+        {
+          days = 7
+        },
+      ]
+    },
+    {
+      enabled = true
+      id      = "retire imports after 10 days"
+      prefix  = "surveys/imports"
+
+      expiration = [
+        {
+          days = 7
+        },
+      ]
+    },
+  ]
+
+  */
 
   /*
    * The following are exampls of bucket and user policies. They are treated as
@@ -86,7 +125,7 @@ EOF
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
     name      = "example-team-s3-bucket-output"
-    namespace = "my-namespace"
+    namespace = "live0-to-live1"
   }
 
   data {
