@@ -37,3 +37,7 @@ variable "versioning" {
   default     = false
 }
 
+variable "lifecycle_rule" {
+  description = "lifecycle"
+  default     = []
+}
