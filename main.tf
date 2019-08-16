@@ -27,6 +27,8 @@ resource "aws_s3_bucket" "bucket" {
   force_destroy = "true"
   policy        = "${data.template_file.bucket_policy.rendered}"
 
+  lifecycle_rule = "${var.lifecycle_rule}"
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
