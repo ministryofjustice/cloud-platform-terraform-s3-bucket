@@ -125,7 +125,7 @@ EOF
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
     name      = "example-team-s3-bucket-output"
-    namespace = "live0-to-live1"
+    namespace = "my-namespace"
   }
 
   data {
