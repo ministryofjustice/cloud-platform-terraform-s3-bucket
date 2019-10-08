@@ -129,5 +129,4 @@ Example for the destination IAM user created by this module:
 ]
 }
 EOF
-}
 ```
