@@ -38,7 +38,7 @@ module "example_team_s3" {
 |------|-------------|:----:|:-----:|:-----:|
 | acl | acl manages access to your bucket | string | `private` | no |
 | bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
-| bucket_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
+| user_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
 | versioning | version objects stored within your bucket. | boolean | `false` | no |
 | providers | provider to use | array of string | default provider | no
 
@@ -64,3 +64,69 @@ Some of the inputs are tags. All infrastructure resources need to be tagged acco
 | bucket_arn | Arn for s3 bucket created |
 | bucket_name | bucket name |
 | secret_access_key | Secret key for s3 account |
+
+## Migrate from existing buckets
+
+The `user_policy` input is useful when migrating data from existing bucket(s). For commands like `s3 ls` or `s3 sync` to work across accounts, a policy granting access must be set in 2 places: the *source bucket* and the *destination user*
+
+Example for the source bucket:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowSourceBucketAccess",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:GetObject"
+            ],
+            "Principal": {
+                "AWS": "arn:aws:iam::<accountid>:user/system/s3-bucket-user/<team>/s3-bucket-user-random"
+            },
+            "Resource": [
+                "arn:aws:s3:::source-bucket",
+                "arn:aws:s3:::source-bucket/*"
+            ]
+        }
+    ]
+}
+```
+
+Note the bucket being listed twice, this is needed not a typo.
+
+Example for the destination IAM user created by this module:
+
+```
+  user_policy = <<EOF
+{
+"Version": "2012-10-17",
+"Statement": [
+  {
+    "Sid": "",
+    "Effect": "Allow",
+    "Action": [
+      "s3:GetBucketLocation",
+      "s3:ListBucket"
+    ],
+    "Resource": [
+      "$${bucket_arn}",
+      "arn:aws:s3:::source-bucket"
+    ]
+  },
+  {
+    "Sid": "",
+    "Effect": "Allow",
+    "Action": [
+      "s3:*"
+    ],
+    "Resource": [
+      "$${bucket_arn}/*",
+      "arn:aws:s3:::source-bucket/*"
+    ]
+  }
+]
+}
+EOF
+```
