@@ -69,7 +69,28 @@ Some of the inputs are tags. All infrastructure resources need to be tagged acco
 
 The `user_policy` input is useful when migrating data from existing bucket(s). For commands like `s3 ls` or `s3 sync` to work across accounts, a policy granting access must be set in 2 places: the *source bucket* and the *destination user*
 
-Example for the source bucket:
+
+### Source policy
+
+The source bucket must permit the destination s3 IAM user to "read" from its bucket explcitly.
+
+Example to retrieve destination IAM user for use in source bucket policy
+
+```bash
+# retrieve destination s3 user ARN
+$ unset AWS_PROFILE ; read K a n S <<<$(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d') ; export AWS_ACCESS_KEY_ID=$K ; export AWS_SECRET_ACCESS_KEY=$S ; aws sts get-caller-identity
+```
+
+You should get output similar to below:
+```json
+{
+"UserId": "<userid>",
+"Account": "<accountid>",
+"Arn": "arn:aws:iam::<accountid>:user/system/s3-bucket-user/<team>/<random-s3-bucket-username>"
+}
+```
+
+Example for the source bucket (using retrieved ARN from above):
 
 ```
 {
@@ -94,8 +115,10 @@ Example for the source bucket:
 }
 ```
 
-Note the bucket being listed twice, this is needed not a typo.
+Note the bucket being listed twice, this is needed not a typo - the first is for the bucket itself, second for objects within it.
 
+
+### Destination IAM user policy
 Example for the destination IAM user created by this module:
 
 ```
@@ -130,3 +153,17 @@ Example for the destination IAM user created by this module:
 }
 EOF
 ```
+
+### Synchronization
+
+Once configured the following, executed within a relevantly provisioned pod in the destination namespace, will add new, update existing and delete objects (not in source).
+
+```bash
+aws s3 sync --delete \
+  s3://source_bucket_name \
+  s3://destination_bucket_name \
+  --source-region source_region \
+  --region destination_region
+```
+
+For an example of a pod with a custom CLI that wraps s3 sync you can see the [cccd-migrator](https://github.com/ministryofjustice/cccd-migrator)
