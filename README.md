@@ -70,20 +70,28 @@ Some of the inputs are tags. All infrastructure resources need to be tagged acco
 The `user_policy` input is useful when migrating data from existing bucket(s). For commands like `s3 ls` or `s3 sync` to work across accounts, a policy granting access must be set in 2 places: the *source bucket* and the *destination user*
 
 
-### Source policy
+### Source bucket policy
 
 The source bucket must permit the destination s3 IAM user to "read" from its bucket explcitly.
 
-Example to retrieve destination IAM user for use in source bucket policy
+Example to retrieve destination IAM user for use in source bucket policy. _requires [jq - commandline JSON processer](https://stedolan.github.io/jq/)_
 
 ```bash
 # retrieve destination s3 user ARN
 
-# bash
-$ unset AWS_PROFILE ; read K a n S <<<$(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d') ; export AWS_ACCESS_KEY_ID=$K ; export AWS_SECRET_ACCESS_KEY=$S ; aws sts get-caller-identity
+# retrieve live-1 namespace's s3 credentials
+$ kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d'
+=>
+<access_key_id>
+<bucket_arn>
+<bucket_name>
+<secret_access_key>
 
-# zsh
-$ unset AWS_PROFILE ; array=($(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d')); read K a n S <<<$array ; export AWS_ACCESS_KEY_ID=$K ; export AWS_SECRET_ACCESS_KEY=$S ; aws sts get-caller-identity
+# retrieve IAM user details using credentials
+$ unset AWS_PROFILE; AWS_ACCESS_KEY_ID=<access_key_id> AWS_SECRET_ACCESS_KEY=<secret_access_key> aws sts get-caller-identity
+
+# Alternative single call in bash
+$ unset AWS_PROFILE; read K a n S <<<$(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d') ; AWS_ACCESS_KEY_ID=$K AWS_SECRET_ACCESS_KEY=$S aws sts get-caller-identity
 ```
 
 You should get output similar to below:
