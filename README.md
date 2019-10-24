@@ -78,7 +78,12 @@ Example to retrieve destination IAM user for use in source bucket policy
 
 ```bash
 # retrieve destination s3 user ARN
+
+# bash
 $ unset AWS_PROFILE ; read K a n S <<<$(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d') ; export AWS_ACCESS_KEY_ID=$K ; export AWS_SECRET_ACCESS_KEY=$S ; aws sts get-caller-identity
+
+# zsh
+$ unset AWS_PROFILE ; array=($(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d')); read K a n S <<<$array ; export AWS_ACCESS_KEY_ID=$K ; export AWS_SECRET_ACCESS_KEY=$S ; aws sts get-caller-identity
 ```
 
 You should get output similar to below:
