@@ -28,6 +28,8 @@ resource "aws_s3_bucket" "bucket" {
   policy        = "${data.template_file.bucket_policy.rendered}"
 
   lifecycle_rule = "${var.lifecycle_rule}"
+  
+  cors_rule      = "${var.cors_rule}"
 
   server_side_encryption_configuration {
     rule {
