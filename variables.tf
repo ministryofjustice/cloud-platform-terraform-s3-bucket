@@ -41,3 +41,8 @@ variable "lifecycle_rule" {
   description = "lifecycle"
   default     = []
 }
+
+variable "cors_rule" {
+  description = "cors rule"
+  default = []
+}

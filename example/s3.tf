@@ -20,11 +20,33 @@ module "example_team_s3_bucket" {
   }
 
   /*
+   * The following example can be used if you need to define CORS rules for your s3 bucket. 
+   *  Follow the guidance here "https://www.terraform.io/docs/providers/aws/r/s3_bucket.html#using-cors"
+   *  
+
+  cors_rule =[
+    {
+      allowed_headers = ["*"]
+      allowed_methods = ["GET"]
+      allowed_origins = ["https://s3-website-test.hashicorp.com"]
+      expose_headers  = ["ETag"]
+      max_age_seconds = 3000
+    },
+    {
+      allowed_headers = ["*"]
+      allowed_methods = ["PUT"]
+      allowed_origins = ["https://s3-website-test.hashicorp.com"]
+      expose_headers  = [""]
+      max_age_seconds = 3000
+    },
+  ]
+
+
+  /*
    * The following example can be used if you need to set a lifecycle for your s3. 
    *  Follow the guidance here "https://www.terraform.io/docs/providers/aws/r/s3_bucket.html#using-object-lifecycle"
    *  "https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html"
-   *  
-
+   *
   lifecycle_rule = [
     {
       enabled = true
