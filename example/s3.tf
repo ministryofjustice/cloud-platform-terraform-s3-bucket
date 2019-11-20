@@ -16,7 +16,7 @@ module "example_team_s3_bucket" {
 
   providers = {
     # Can be either "aws.london" or "aws.ireland"
-    aws = "aws.london"
+    aws = aws.london
   }
 
   /*
@@ -150,10 +150,11 @@ resource "kubernetes_secret" "example_team_s3_bucket" {
     namespace = "my-namespace"
   }
 
-  data {
-    access_key_id     = "${module.example_team_s3_bucket.access_key_id}"
-    secret_access_key = "${module.example_team_s3_bucket.secret_access_key}"
-    bucket_arn        = "${module.example_team_s3_bucket.bucket_arn}"
-    bucket_name       = "${module.example_team_s3_bucket.bucket_name}"
+  data = {
+    access_key_id     = module.example_team_s3_bucket.access_key_id
+    secret_access_key = module.example_team_s3_bucket.secret_access_key
+    bucket_arn        = module.example_team_s3_bucket.bucket_arn
+    bucket_name       = module.example_team_s3_bucket.bucket_name
   }
 }
+
