@@ -1,35 +1,99 @@
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
+data "aws_caller_identity" "current" {
+}
+
+data "aws_region" "current" {
+}
 
 resource "random_id" "id" {
   byte_length = 16
 }
 
 data "template_file" "bucket_policy" {
-  template = "${var.bucket_policy}"
+  template = var.bucket_policy
 
-  vars {
+  vars = {
     bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
   }
 }
 
 data "template_file" "user_policy" {
-  template = "${var.user_policy}"
+  template = var.user_policy
 
-  vars {
+  vars = {
     bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
   }
 }
 
 resource "aws_s3_bucket" "bucket" {
   bucket        = "cloud-platform-${random_id.id.hex}"
-  acl           = "${var.acl}"
+  acl           = var.acl
   force_destroy = "true"
-  policy        = "${data.template_file.bucket_policy.rendered}"
+  policy        = data.template_file.bucket_policy.rendered
 
-  lifecycle_rule = "${var.lifecycle_rule}"
-  
-  cors_rule      = "${var.cors_rule}"
+  dynamic "lifecycle_rule" {
+    for_each = var.lifecycle_rule
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
+
+      abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
+      enabled                                = lifecycle_rule.value.enabled
+      id                                     = lookup(lifecycle_rule.value, "id", null)
+      prefix                                 = lookup(lifecycle_rule.value, "prefix", null)
+      tags                                   = lookup(lifecycle_rule.value, "tags", null)
+
+      dynamic "expiration" {
+        for_each = lookup(lifecycle_rule.value, "expiration", [])
+        content {
+          date                         = lookup(expiration.value, "date", null)
+          days                         = lookup(expiration.value, "days", null)
+          expired_object_delete_marker = lookup(expiration.value, "expired_object_delete_marker", null)
+        }
+      }
+
+      dynamic "noncurrent_version_expiration" {
+        for_each = lookup(lifecycle_rule.value, "noncurrent_version_expiration", [])
+        content {
+          days = lookup(noncurrent_version_expiration.value, "days", null)
+        }
+      }
+
+      dynamic "noncurrent_version_transition" {
+        for_each = lookup(lifecycle_rule.value, "noncurrent_version_transition", [])
+        content {
+          days          = lookup(noncurrent_version_transition.value, "days", null)
+          storage_class = noncurrent_version_transition.value.storage_class
+        }
+      }
+
+      dynamic "transition" {
+        for_each = lookup(lifecycle_rule.value, "transition", [])
+        content {
+          date          = lookup(transition.value, "date", null)
+          days          = lookup(transition.value, "days", null)
+          storage_class = transition.value.storage_class
+        }
+      }
+    }
+  }
+
+  dynamic "cors_rule" {
+    for_each = var.cors_rule
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
+
+      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
+      allowed_methods = cors_rule.value.allowed_methods
+      allowed_origins = cors_rule.value.allowed_origins
+      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
+      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
+    }
+  }
 
   server_side_encryption_configuration {
     rule {
@@ -40,16 +104,16 @@ resource "aws_s3_bucket" "bucket" {
   }
 
   versioning {
-    enabled = "${var.versioning}"
+    enabled = var.versioning
   }
 
-  tags {
-    business-unit          = "${var.business-unit}"
-    application            = "${var.application}"
-    is-production          = "${var.is-production}"
-    environment-name       = "${var.environment-name}"
-    owner                  = "${var.team_name}"
-    infrastructure-support = "${var.infrastructure-support}"
+  tags = {
+    business-unit          = var.business-unit
+    application            = var.application
+    is-production          = var.is-production
+    environment-name       = var.environment-name
+    owner                  = var.team_name
+    infrastructure-support = var.infrastructure-support
   }
 }
 
@@ -59,7 +123,7 @@ resource "aws_iam_user" "user" {
 }
 
 resource "aws_iam_access_key" "user" {
-  user = "${aws_iam_user.user.name}"
+  user = aws_iam_user.user.name
 }
 
 data "aws_iam_policy_document" "policy" {
@@ -108,6 +172,7 @@ data "aws_iam_policy_document" "policy" {
 
 resource "aws_iam_user_policy" "policy" {
   name   = "s3-bucket-read-write"
-  policy = "${data.template_file.user_policy.rendered == "" ? data.aws_iam_policy_document.policy.json : data.template_file.user_policy.rendered}"
-  user   = "${aws_iam_user.user.name}"
+  policy = data.template_file.user_policy.rendered == "" ? data.aws_iam_policy_document.policy.json : data.template_file.user_policy.rendered
+  user   = aws_iam_user.user.name
 }
+
