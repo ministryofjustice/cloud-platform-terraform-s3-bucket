@@ -1,5 +1,6 @@
 terraform {
-  backend "s3" {}
+  backend "s3" {
+  }
 }
 
 provider "aws" {
@@ -17,3 +18,4 @@ provider "aws" {
   alias  = "ireland"
   region = "eu-west-1"
 }
+

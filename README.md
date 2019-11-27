@@ -14,7 +14,7 @@ From module version 3.2, this replaces the use of the `aws-s3-region`.**
 
 ```hcl
 module "example_team_s3" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.0"
 
   team_name              = "example-repo"
   acl                    = "public-read"
@@ -27,7 +27,7 @@ module "example_team_s3" {
 
   # This is a new input.
   providers = {
-    aws = "aws.london"
+    aws = aws.london
   }
 }
 ```
