@@ -119,7 +119,7 @@ resource "aws_s3_bucket" "bucket" {
 
 resource "aws_iam_user" "user" {
   name = "s3-bucket-user-${random_id.id.hex}"
-  path = "/system/s3-bucket-user/${var.team_name}/"
+  path = "/system/s3-bucket-user/"
 }
 
 resource "aws_iam_access_key" "user" {
