@@ -14,11 +14,21 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+ /* 
+  * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
+                For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+  
   versioning             = true
-  logging_enabled        = true
-  log_target_bucket      = "cloud-platform-8448c8fdd146a9c6cb8f18ae2f46a9ca"
-  log_path               = "log/"
 
+  * Logging: By default set to false. When you enable logging, Amazon S3 delivers access logs for a source bucket to a target bucket that you choose.
+             The target bucket must be in the same AWS Region as the source bucket and must not have a default retention period configuration.
+             For more details on logging please vist: https://docs.aws.amazon.com/AmazonS3/latest/user-guide/server-access-logging.html
+
+  logging_enabled        = true
+  log_target_bucket      = "<TARGET_BUCKET_NAME>"
+  log_path               = "<LOG_PATH>" e.g log/
+  
+*/
 
   providers = {
     # Can be either "aws.london" or "aws.ireland"
