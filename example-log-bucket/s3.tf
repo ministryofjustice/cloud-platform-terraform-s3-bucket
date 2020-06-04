@@ -14,7 +14,10 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
-  acl                    = "log-delivery-write"
+  versioning             = true
+  logging_enabled        = true
+  log_target_bucket      = "cloud-platform-8448c8fdd146a9c6cb8f18ae2f46a9ca"
+  log_path               = "log/"
 
 
   providers = {
@@ -148,7 +151,7 @@ EOF
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
-    name      = "example-team-s3-bucket-output"
+    name      = "example-team-s3-bucket-output2"
     namespace = "s3-test"
   }
 
