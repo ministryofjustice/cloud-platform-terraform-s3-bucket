@@ -5,7 +5,8 @@
  *
  */
 module "example_team_s3_bucket" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.1"
+  #source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.1"
+  source = "../"
 
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
@@ -13,8 +14,21 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
-  acl                    = "log-delivery-write"
+ /* 
+  * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
+                For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+  
+  versioning             = true
 
+  * Logging: By default set to false. When you enable logging, Amazon S3 delivers access logs for a source bucket to a target bucket that you choose.
+             The target bucket must be in the same AWS Region as the source bucket and must not have a default retention period configuration.
+             For more details on logging please vist: https://docs.aws.amazon.com/AmazonS3/latest/user-guide/server-access-logging.html
+
+  logging_enabled        = true
+  log_target_bucket      = "<TARGET_BUCKET_NAME>"
+  log_path               = "<LOG_PATH>" e.g log/
+  
+*/
 
   providers = {
     # Can be either "aws.london" or "aws.ireland"
@@ -147,7 +161,7 @@ EOF
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
-    name      = "example-team-s3-bucket-output"
+    name      = "example-team-s3-bucket-output2"
     namespace = "s3-test"
   }
 
