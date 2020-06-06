@@ -160,8 +160,8 @@ EOF
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
-    name      = "example-team-s3-bucket-output2"
-    namespace = "s3-test"
+    name      = "example-team-s3-bucket-output"
+    namespace = "my-namespace"
   }
 
   data = {
