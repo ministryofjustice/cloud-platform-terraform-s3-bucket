@@ -5,8 +5,8 @@
  *
  */
 module "example_team_s3_bucket" {
+
   source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
- 
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
   application            = "cloud-platform-terraform-s3-bucket"
@@ -160,8 +160,8 @@ EOF
 
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
-    name      = "example-team-s3-bucket-output2"
-    namespace = "s3-test"
+    name      = "example-team-s3-bucket-output"
+    namespace = "my-namespace"
   }
 
   data = {
