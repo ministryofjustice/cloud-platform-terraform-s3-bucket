@@ -25,6 +25,11 @@ module "example_team_s3_bucket" {
 
   logging_enabled        = true
   log_target_bucket      = "<TARGET_BUCKET_NAME>"
+
+  # NOTE: Important note that the target bucket for logging must have it's 'acl' property set to 'log-delivery-write'. 
+          To apply this to an existing target bucket simply add the followng variable to its terraform module
+          acl = "log-delivery-write"
+          
   log_path               = "<LOG_PATH>" e.g log/
   
 */
