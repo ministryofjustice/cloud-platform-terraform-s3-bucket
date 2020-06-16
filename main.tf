@@ -30,6 +30,7 @@ resource "aws_s3_bucket" "bucket" {
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
 
+
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
     content {
@@ -105,6 +106,14 @@ resource "aws_s3_bucket" "bucket" {
 
   versioning {
     enabled = var.versioning
+  }
+
+  dynamic "logging" {
+    for_each = var.logging_enabled == true ? [1] : []
+    content {
+      target_bucket = var.log_target_bucket
+      target_prefix = var.log_path
+    }
   }
 
   tags = {

@@ -14,7 +14,7 @@ From module version 3.2, this replaces the use of the `aws-s3-region`.**
 
 ```hcl
 module "example_team_s3" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.0"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
 
   team_name              = "example-repo"
   acl                    = "public-read"
@@ -24,6 +24,22 @@ module "example_team_s3" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "example-team@digtal.justice.gov.uk"
+
+ /* 
+  * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
+                For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+  
+  versioning             = true
+
+  * Logging: By default set to false. When you enable logging, Amazon S3 delivers access logs for a source bucket to target            bucket that you choose.
+             The target bucket must be in the same AWS Region as the source bucket and must not have a default retention period configuration.
+             For more details on logging please vist: https://docs.aws.amazon.com/AmazonS3/latest/user-guide/server-access-logging.html
+
+  logging_enabled        = true
+  log_target_bucket      = "<TARGET_BUCKET_NAME>"
+  log_path               = "<LOG_PATH>" e.g log/
+  
+*/
 
   # This is a new input.
   providers = {
@@ -40,6 +56,9 @@ module "example_team_s3" {
 | bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
 | user_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
 | versioning | version objects stored within your bucket. | boolean | `false` | no |
+| logging_enabled | When set to true enables logging
+| log_target_bucket | Target bucket where logs are to be delivered to
+  log_path           | Path of logs on the target bucket e.g log/
 | providers | provider to use | array of string | default provider | no
 
 ### Tags

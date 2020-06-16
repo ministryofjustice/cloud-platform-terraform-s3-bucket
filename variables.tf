@@ -40,6 +40,22 @@ variable "versioning" {
   default     = false
 }
 
+variable "log_target_bucket" {
+  description = "Set the target bucket for logs"
+  default = ""
+}
+
+variable "logging_enabled" {
+  description = "Set the logging for bucket"
+  default = false
+}
+
+variable "log_path" {
+  description = "Set the path of the logs"
+  default = ""
+}
+
+
 variable "lifecycle_rule" {
   description = "lifecycle"
   default     = []

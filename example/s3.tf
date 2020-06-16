@@ -5,14 +5,34 @@
  *
  */
 module "example_team_s3_bucket" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.1"
 
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
   application            = "cloud-platform-terraform-s3-bucket"
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+ /* 
+  * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
+                For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
+  
+  versioning             = true
+
+  * Logging: By default set to false. When you enable logging, Amazon S3 delivers access logs for a source bucket to a target bucket that you choose.
+             The target bucket must be in the same AWS Region as the source bucket and must not have a default retention period configuration.
+             For more details on logging please vist: https://docs.aws.amazon.com/AmazonS3/latest/user-guide/server-access-logging.html
+
+  logging_enabled        = true
+  log_target_bucket      = "<TARGET_BUCKET_NAME>"
+
+  # NOTE: Important note that the target bucket for logging must have it's 'acl' property set to 'log-delivery-write'. 
+          To apply this to an existing target bucket simply add the followng variable to its terraform module
+          acl = "log-delivery-write"
+          
+  log_path               = "<LOG_PATH>" e.g log/
+  
+*/
 
   providers = {
     # Can be either "aws.london" or "aws.ireland"
