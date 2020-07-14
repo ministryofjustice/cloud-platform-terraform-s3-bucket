@@ -25,6 +25,7 @@ data "template_file" "user_policy" {
 }
 
 resource "aws_s3_bucket" "bucket" {
+
   bucket        = "cloud-platform-${random_id.id.hex}"
   acl           = var.acl
   force_destroy = "true"
@@ -183,5 +184,17 @@ resource "aws_iam_user_policy" "policy" {
   name   = "s3-bucket-read-write"
   policy = data.template_file.user_policy.rendered == "" ? data.aws_iam_policy_document.policy.json : data.template_file.user_policy.rendered
   user   = aws_iam_user.user.name
+}
+
+resource "aws_s3_bucket_public_access_block" "block_public_access" {
+
+  count = var.enable_allow_block_pub_access ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+
+  block_public_acls   = true
+  block_public_policy = true
+  ignore_public_acls      = true 
+  restrict_public_buckets = true 
+
 }
 

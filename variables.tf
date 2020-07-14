@@ -66,3 +66,9 @@ variable "cors_rule" {
   default     = []
 }
 
+
+variable "enable_allow_block_pub_access" {
+  description = "Enable whether to allow for the bucket to be blocked from public access"
+  default     = true
+  type        = bool
+}
