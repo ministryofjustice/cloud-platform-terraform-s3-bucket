@@ -6,8 +6,7 @@
  */
 module "example_team_s3_bucket" {
 
-  //source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
-  source = "../"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
   application            = "cloud-platform-terraform-s3-bucket"
@@ -15,8 +14,13 @@ module "example_team_s3_bucket" {
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
 
-
  /* 
+
+  Public Buckets: By default, buckets are private, however to create a 'public' bucket add the following two variables when calling the module
+                    acl                           = "public-read"
+                    enable_allow_block_pub_access = false
+                  
+
   * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
                 For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
   
