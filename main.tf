@@ -188,13 +188,13 @@ resource "aws_iam_user_policy" "policy" {
 
 resource "aws_s3_bucket_public_access_block" "block_public_access" {
 
-  count = var.enable_allow_block_pub_access ? 1 : 0
+  count  = var.enable_allow_block_pub_access ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
 
-  block_public_acls   = true
-  block_public_policy = true
-  ignore_public_acls      = true 
-  restrict_public_buckets = true 
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 
 }
 
