@@ -6,14 +6,30 @@
  */
 module "example_team_s3_bucket" {
 
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.3"
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
   application            = "cloud-platform-terraform-s3-bucket"
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+
  /* 
+
+  * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
+                    By default buckets are private, however to create a 'public' bucket add the following two variables when calling the module:
+
+                    acl                           = "public-read"
+                    enable_allow_block_pub_access = false
+
+                    For more information granting public access to S3 buckets, please see AWS documentation: 
+                    https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
+
+  * Converting existing private bucket to public: If amending an existing private bucket that was created using version 4.3 or above then you will need to raise two PRs:
+                    
+                    (1) First PR to add the var: enable_allow_block_pub_access = false
+                    (2) Second PR to add the var: acl = "public-read"
+
   * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
                 For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
   
@@ -163,6 +179,7 @@ EOF
   }
 }
 
+
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
     name      = "example-team-s3-bucket-output"
@@ -176,4 +193,3 @@ resource "kubernetes_secret" "example_team_s3_bucket" {
     bucket_name       = module.example_team_s3_bucket.bucket_name
   }
 }
-

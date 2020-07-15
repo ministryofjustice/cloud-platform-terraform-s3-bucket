@@ -26,6 +26,21 @@ module "example_team_s3" {
   infrastructure-support = "example-team@digtal.justice.gov.uk"
 
  /* 
+
+  * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
+                    By default buckets are private, however to create a 'public' bucket add the following two variables when calling the module:
+
+                    acl                           = "public-read"
+                    enable_allow_block_pub_access = false
+
+                    For more information granting public access to S3 buckets, please see AWS documentation: 
+                    https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
+
+  * Converting existing private bucket to public: If amending an existing private bucket that was created using version 4.3 or above then you will need to raise two PRs:
+                    
+                    (1) First PR to add the var: enable_allow_block_pub_access = false
+                    (2) Second PR to add the var: acl = "public-read"
+
   * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
                 For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
   
@@ -199,3 +214,6 @@ aws s3 sync --delete \
 ```
 
 For an example of a pod with a custom CLI that wraps s3 sync you can see the [cccd-migrator](https://github.com/ministryofjustice/cccd-migrator)
+
+
+

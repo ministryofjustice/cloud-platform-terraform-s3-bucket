@@ -42,17 +42,17 @@ variable "versioning" {
 
 variable "log_target_bucket" {
   description = "Set the target bucket for logs"
-  default = ""
+  default     = ""
 }
 
 variable "logging_enabled" {
   description = "Set the logging for bucket"
-  default = false
+  default     = false
 }
 
 variable "log_path" {
   description = "Set the path of the logs"
-  default = ""
+  default     = ""
 }
 
 
@@ -66,3 +66,9 @@ variable "cors_rule" {
   default     = []
 }
 
+
+variable "enable_allow_block_pub_access" {
+  description = "Enable whether to allow for the bucket to be blocked from public access"
+  default     = true
+  type        = bool
+}
