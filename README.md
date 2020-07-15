@@ -33,6 +33,9 @@ module "example_team_s3" {
                     acl                           = "public-read"
                     enable_allow_block_pub_access = false
 
+                    For more information granting public access to S3 buckets, please see AWS documentation: 
+                    https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
+
   * Converting existing private bucket to public: If amending an existing private bucket that was created using version 4.3 or above then you will need to raise two PRs:
                     
                     (1) First PR to add the var: enable_allow_block_pub_access = false
