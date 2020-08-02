@@ -75,6 +75,9 @@ module "example_team_s3" {
 | log_target_bucket | Target bucket where logs are to be delivered to
   log_path           | Path of logs on the target bucket e.g log/
 | providers | provider to use | array of string | default provider | no
+| bucket_name | bucket_name, not recommended | string| empty, auto-generated | no
+
+
 
 ### Tags
 
