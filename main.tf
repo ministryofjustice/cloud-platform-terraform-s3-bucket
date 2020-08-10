@@ -12,7 +12,7 @@ data "template_file" "bucket_policy" {
   template = var.bucket_policy
 
   vars = {
-    bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
+    bucket_arn = "arn:aws:s3:::${local.bucket_name}"
   }
 }
 
@@ -20,13 +20,16 @@ data "template_file" "user_policy" {
   template = var.user_policy
 
   vars = {
-    bucket_arn = "arn:aws:s3:::cloud-platform-${random_id.id.hex}"
+    bucket_arn = "arn:aws:s3:::${local.bucket_name}"
   }
 }
 
-resource "aws_s3_bucket" "bucket" {
+locals {
+  bucket_name = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+}
 
-  bucket        = "cloud-platform-${random_id.id.hex}"
+resource "aws_s3_bucket" "bucket" {
+  bucket        = local.bucket_name
   acl           = var.acl
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
