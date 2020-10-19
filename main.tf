@@ -121,6 +121,7 @@ resource "aws_s3_bucket" "bucket" {
   }
 
   tags = {
+    namespace              = var.namespace
     business-unit          = var.business-unit
     application            = var.application
     is-production          = var.is-production

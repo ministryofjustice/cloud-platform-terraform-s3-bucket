@@ -7,6 +7,9 @@ variable "application" {
 variable "environment-name" {
 }
 
+variable "namespace" {
+}
+
 variable "business-unit" {
   description = "Area of the MOJ responsible for the service"
   default     = "mojdigital"
