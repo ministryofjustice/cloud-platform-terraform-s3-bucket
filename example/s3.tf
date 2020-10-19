@@ -13,6 +13,8 @@ module "example_team_s3_bucket" {
   is-production          = "false"
   environment-name       = "development"
   infrastructure-support = "platform@digtal.justice.gov.uk"
+  namespace              = var.namespace
+
 
  /* 
 
@@ -183,7 +185,7 @@ EOF
 resource "kubernetes_secret" "example_team_s3_bucket" {
   metadata {
     name      = "example-team-s3-bucket-output"
-    namespace = "my-namespace"
+    namespace = var.namespace
   }
 
   data = {
