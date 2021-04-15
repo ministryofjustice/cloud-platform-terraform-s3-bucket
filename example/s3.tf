@@ -6,7 +6,7 @@
  */
 module "example_team_s3_bucket" {
 
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.6"
+  source                 = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.6"
   team_name              = "cloudplatform"
   business-unit          = "mojdigital"
   application            = "cloud-platform-terraform-s3-bucket"
@@ -16,7 +16,7 @@ module "example_team_s3_bucket" {
   namespace              = var.namespace
 
 
- /* 
+  /* 
 
   * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
                     By default buckets are private, however to create a 'public' bucket add the following two variables when calling the module:

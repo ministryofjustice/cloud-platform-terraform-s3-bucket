@@ -63,20 +63,68 @@ module "example_team_s3" {
 }
 ```
 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.13 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| aws | n/a |
+| random | n/a |
+| template | n/a |
+
+## Resources
+
+| Name |
+|------|
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) |
+| [aws_iam_access_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_iam_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user) |
+| [aws_iam_user_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) |
+| [aws_s3_bucket_public_access_block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) |
+| [random_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) |
+| [template_file](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| acl | acl manages access to your bucket | string | `private` | no |
-| bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
-| user_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
-| versioning | version objects stored within your bucket. | boolean | `false` | no |
-| logging_enabled | When set to true enables logging
-| log_target_bucket | Target bucket where logs are to be delivered to
-  log_path           | Path of logs on the target bucket e.g log/
-| providers | provider to use | array of string | default provider | no
-| bucket_name | bucket_name, not recommended | string| empty, auto-generated | no
+|------|-------------|------|---------|:--------:|
+| application | n/a | `any` | n/a | yes |
+| environment-name | n/a | `any` | n/a | yes |
+| infrastructure-support | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | `any` | n/a | yes |
+| namespace | n/a | `any` | n/a | yes |
+| team\_name | n/a | `any` | n/a | yes |
+| acl | The bucket ACL to set | `string` | `"private"` | no |
+| bucket\_name | Set the name of the S3 bucket. If left blank, a name will be automatically generated (recommended) | `string` | `""` | no |
+| bucket\_policy | The S3 bucket policy to set. If empty, no policy will be set | `string` | `""` | no |
+| business-unit | Area of the MOJ responsible for the service | `string` | `"mojdigital"` | no |
+| cors\_rule | cors rule | `list` | `[]` | no |
+| enable\_allow\_block\_pub\_access | Enable whether to allow for the bucket to be blocked from public access | `bool` | `true` | no |
+| is-production | n/a | `string` | `"false"` | no |
+| lifecycle\_rule | lifecycle | `list` | `[]` | no |
+| log\_path | Set the path of the logs | `string` | `""` | no |
+| log\_target\_bucket | Set the target bucket for logs | `string` | `""` | no |
+| logging\_enabled | Set the logging for bucket | `bool` | `false` | no |
+| user\_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | `string` | `""` | no |
+| versioning | Enable object versioning for the bucket | `bool` | `false` | no |
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| access\_key\_id | Access key id for s3 account |
+| bucket\_arn | Arn for s3 bucket created |
+| bucket\_name | bucket name |
+| secret\_access\_key | Secret key for s3 account |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 
 ### Tags
@@ -92,15 +140,6 @@ Some of the inputs are tags. All infrastructure resources need to be tagged acco
 | is-production |  | string | `false` | yes |
 | team_name |  | string | - | yes |
 
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| access_key_id | Access key id for s3 account |
-| bucket_arn | Arn for s3 bucket created |
-| bucket_name | bucket name |
-| secret_access_key | Secret key for s3 account |
 
 ## Migrate from existing buckets
 

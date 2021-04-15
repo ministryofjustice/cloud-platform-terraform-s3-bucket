@@ -53,9 +53,9 @@ variable "logging_enabled" {
   default     = false
 }
 
-variable "bucket_name"{
+variable "bucket_name" {
   description = "Set the name of the S3 bucket. If left blank, a name will be automatically generated (recommended)"
-  default = ""
+  default     = ""
 }
 
 variable "log_path" {
