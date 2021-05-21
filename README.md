@@ -63,21 +63,9 @@ module "example_team_s3" {
 }
 ```
 
-## Inputs
+<!--- BEGIN_TF_DOCS --->
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| acl | acl manages access to your bucket | string | `private` | no |
-| bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
-| user_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
-| versioning | version objects stored within your bucket. | boolean | `false` | no |
-| logging_enabled | When set to true enables logging
-| log_target_bucket | Target bucket where logs are to be delivered to
-  log_path           | Path of logs on the target bucket e.g log/
-| providers | provider to use | array of string | default provider | no
-| bucket_name | bucket_name, not recommended | string| empty, auto-generated | no
-
-
+<!--- END_TF_DOCS --->
 
 ### Tags
 
@@ -91,16 +79,6 @@ Some of the inputs are tags. All infrastructure resources need to be tagged acco
 | infrastructure-support | The team responsible for managing the infrastructure. Should be of the form team-email | string | - | yes |
 | is-production |  | string | `false` | yes |
 | team_name |  | string | - | yes |
-
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| access_key_id | Access key id for s3 account |
-| bucket_arn | Arn for s3 bucket created |
-| bucket_name | bucket name |
-| secret_access_key | Secret key for s3 account |
 
 ## Migrate from existing buckets
 
