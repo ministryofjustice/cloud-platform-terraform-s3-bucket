@@ -25,7 +25,7 @@ data "template_file" "user_policy" {
 }
 
 locals {
-  bucket_name = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  bucket_name = var.bucket_name == "" ? "alejandro-${random_id.id.hex}" : var.bucket_name
 }
 
 resource "aws_s3_bucket" "bucket" {
