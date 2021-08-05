@@ -218,5 +218,68 @@ aws s3 sync --delete \
 
 For an example of a pod with a custom CLI that wraps s3 sync you can see the [cccd-migrator](https://github.com/ministryofjustice/cccd-migrator)
 
+### Decompressing Files Stored in S3
 
+If you have some files stored in S3 that are compresses (e.g. `.zip`, `.gzip`, `.bz2`, `.p7z`) you don't need to fully download and re-upload them in order to decompress them you can quite easily decompress them on the cloud platform kubernetes cluster with a `Job`.
 
+The following example, is a `Job` pod connected to a 50Gb persistent volume (so any temporary storage does not fill up a cluster node), using `bunzip2` to decompress a `.bz2` file and re-upload it to S3.
+
+For your needs, simply substitute the namespace, AWS creds, the bucket/filename and the compression tool, then you should be able to use this to decompress a file of any size without having to download them locally to your machine.
+
+```yaml
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: s3-decompression
+  namespace: default
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: tools
+          image: ministryofjustice/cloud-platform-tools:1.43
+          command:
+            - /bin/bash
+            - -c
+            - |
+              cd /unpack
+              aws s3 cp s3://${S3_BUCKET}/<filename>.bz2 - \
+                | bunzip2 \
+                | aws s3 cp - s3://${S3_BUCKET}/<filename>
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: <aws-access-key-id>
+            - name: AWS_SECRET_ACCESS_KEY
+              value: <aws-secret-access-key>
+            - name: S3_BUCKET
+              value: <s3-bucket-name>
+          resources: {}
+          volumeMounts:
+            - name: unpack
+              mountPath: "/unpack"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+      volumes:
+        - name: unpack
+          persistentVolumeClaim:
+            claimName: unpack-small
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: unpack-small
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: "gp2-expand"
+  resources:
+    requests:
+      storage: 50Gi
+```
