@@ -6,6 +6,8 @@ Terraform module that will create an S3 bucket in AWS and a relevant user accoun
 
 The bucket created will have a randomised name of the format `cloud-platform-7a5c4a2a7e2134a`. This ensures that the bucket created is globally unique.
 
+The bucket will be encrypted at rest using AES256 [see main.tf](https://github.com/ministryofjustice/cloud-platform-terraform-s3-bucket/blob/main/main.tf#L103-L109)
+
 ## Usage
 
 **This module will create the resources in the region of the providers specified in the *providers* input.
