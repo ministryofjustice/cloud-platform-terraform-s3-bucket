@@ -4,19 +4,18 @@
  * releases page of this repository.
  *
  */
-module "example_team_s3_bucket" {
+module "s3_bucket" {
 
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.6"
-  team_name              = "cloudplatform"
-  business-unit          = "mojdigital"
-  application            = "cloud-platform-terraform-s3-bucket"
-  is-production          = "false"
-  environment-name       = "development"
-  infrastructure-support = "platform@digtal.justice.gov.uk"
+  source                 = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.6"
+  team_name              = var.team_name
+  business-unit          = var.business_unit
+  application            = var.application
+  is-production          = var.is_production
+  environment-name       = var.environment_name
+  infrastructure-support = var.infrastructure_support
   namespace              = var.namespace
 
-
- /* 
+  /* 
 
   * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
                     By default buckets are private, however to create a 'public' bucket add the following two variables when calling the module:
@@ -182,16 +181,16 @@ EOF
 }
 
 
-resource "kubernetes_secret" "example_team_s3_bucket" {
+resource "kubernetes_secret" "s3_bucket" {
   metadata {
-    name      = "example-team-s3-bucket-output"
+    name      = "s3-bucket-output"
     namespace = var.namespace
   }
 
   data = {
-    access_key_id     = module.example_team_s3_bucket.access_key_id
-    secret_access_key = module.example_team_s3_bucket.secret_access_key
-    bucket_arn        = module.example_team_s3_bucket.bucket_arn
-    bucket_name       = module.example_team_s3_bucket.bucket_name
+    access_key_id     = module.s3_bucket.access_key_id
+    secret_access_key = module.s3_bucket.secret_access_key
+    bucket_arn        = module.s3_bucket.bucket_arn
+    bucket_name       = module.s3_bucket.bucket_name
   }
 }
