@@ -25,7 +25,8 @@ data "template_file" "user_policy" {
 }
 
 locals {
-  bucket_name = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -150,7 +151,7 @@ data "aws_iam_policy_document" "policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.bucket.id}",
+      local.s3_bucket_arn,
     ]
   }
 
@@ -179,7 +180,7 @@ data "aws_iam_policy_document" "policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*",
+      "${local.s3_bucket_arn}/*",
     ]
   }
 }
