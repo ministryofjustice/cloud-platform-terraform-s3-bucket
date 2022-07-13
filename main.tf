@@ -1,9 +1,3 @@
-data "aws_caller_identity" "current" {
-}
-
-data "aws_region" "current" {
-}
-
 resource "random_id" "id" {
   byte_length = 16
 }
@@ -34,7 +28,6 @@ resource "aws_s3_bucket" "bucket" {
   acl           = var.acl
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
-
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
@@ -193,7 +186,6 @@ resource "aws_iam_user_policy" "policy" {
 }
 
 resource "aws_s3_bucket_public_access_block" "block_public_access" {
-
   count  = var.enable_allow_block_pub_access ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
 
@@ -201,6 +193,4 @@ resource "aws_s3_bucket_public_access_block" "block_public_access" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-
 }
-
