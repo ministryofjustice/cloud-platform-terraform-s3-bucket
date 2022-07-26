@@ -12,10 +12,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    ec2            = "http://localhost:4566"
-    iam            = "http://localhost:4566"
-    s3             = "http://localhost:4566"
-    sts            = "http://localhost:4566"
+    ec2 = "http://localhost:4566"
+    iam = "http://localhost:4566"
+    s3  = "http://localhost:4566"
+    sts = "http://localhost:4566"
   }
 }
 
@@ -30,4 +30,3 @@ module "s3" {
   infrastructure-support = "platform@digtal.justice.gov.uk"
   namespace              = "cloud-platform"
 }
-
