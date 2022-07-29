@@ -1,9 +1,3 @@
-data "aws_caller_identity" "current" {
-}
-
-data "aws_region" "current" {
-}
-
 resource "random_id" "id" {
   byte_length = 16
 }
@@ -34,7 +28,6 @@ resource "aws_s3_bucket" "bucket" {
   acl           = var.acl
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
-
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
