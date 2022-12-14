@@ -86,13 +86,13 @@ variable "log_path" {
 variable "lifecycle_rule" {
   description = "lifecycle"
   default     = []
-  type        = list(any)
+  type        = any # list(any)
 }
 
 variable "cors_rule" {
   description = "cors rule"
   default     = []
-  type        = list(any)
+  type        = any # list(any)
 }
 
 variable "enable_allow_block_pub_access" {
