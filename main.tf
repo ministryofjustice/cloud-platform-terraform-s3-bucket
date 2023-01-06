@@ -130,7 +130,7 @@ resource "aws_iam_user" "user" {
   path = "/system/s3-bucket-user/"
 }
 
-resource "aws_iam_access_key" "user" {
+resource "aws_iam_access_key" "user_2023" {
   user = aws_iam_user.user.name
 }
 

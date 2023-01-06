@@ -1,11 +1,11 @@
 output "access_key_id" {
   description = "Access key id for s3 account"
-  value       = aws_iam_access_key.user.id
+  value       = aws_iam_access_key.user_2023.id
 }
 
 output "secret_access_key" {
   description = "Secret key for s3 account"
-  value       = aws_iam_access_key.user.secret
+  value       = aws_iam_access_key.user_2023.secret
 }
 
 output "bucket_arn" {
