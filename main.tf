@@ -21,6 +21,7 @@ data "template_file" "user_policy" {
 locals {
   bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
   s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
+  versioning    = var.versioning == "true" ? "Enabled" : "Disabled"
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -29,14 +30,69 @@ resource "aws_s3_bucket" "bucket" {
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
 
-  dynamic "lifecycle_rule" {
-    for_each = var.lifecycle_rule
-    content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 
+  tags = {
+    namespace              = var.namespace
+    business-unit          = var.business-unit
+    application            = var.application
+    is-production          = var.is-production
+    environment-name       = var.environment-name
+    owner                  = var.team_name
+    infrastructure-support = var.infrastructure-support
+  }
+}
+
+resource "aws_s3_bucket_versioning" "versioning_s3" {
+
+  bucket = aws_s3_bucket.bucket.id
+  versioning_configuration {
+    status = local.versioning
+    mfa_delete = local.versioning
+  }
+}
+
+resource "aws_s3_bucket_cors_configuration" "cors_s3" {
+  count = length(var.cors_rule) > 0 ? 1 : 0
+  
+  bucket = aws_s3_bucket.bucket.id
+
+  dynamic "cors_rule" {
+    for_each = var.cors_rule
+    content {
+      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
+      allowed_methods = cors_rule.value.allowed_methods
+      allowed_origins = cors_rule.value.allowed_origins
+      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
+      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
+    }
+  }
+}
+
+resource "aws_s3_bucket_logging" "logging_s3" {
+  count = var.logging_enabled == true ? 1 : 0
+
+  bucket = aws_s3_bucket.bucket.id
+
+  target_bucket = var.log_target_bucket
+  target_prefix = var.log_path
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_s3" {
+  count =  length(var.lifecycle_rule) > 0 ? 1 : 0
+
+  bucket = aws_s3_bucket.bucket.id
+
+  dynamic "rule" {
+    for_each = var.lifecycle_rule
+
+    content {
       abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
       enabled                                = lifecycle_rule.value.enabled
       id                                     = lookup(lifecycle_rule.value, "id", null)
@@ -49,6 +105,15 @@ resource "aws_s3_bucket" "bucket" {
           date                         = lookup(expiration.value, "date", null)
           days                         = lookup(expiration.value, "days", null)
           expired_object_delete_marker = lookup(expiration.value, "expired_object_delete_marker", null)
+        }
+      }
+
+      dynamic "transition" {
+        for_each = lookup(lifecycle_rule.value, "transition", [])
+        content {
+          date          = lookup(transition.value, "date", null)
+          days          = lookup(transition.value, "days", null)
+          storage_class = transition.value.storage_class
         }
       }
 
@@ -66,62 +131,7 @@ resource "aws_s3_bucket" "bucket" {
           storage_class = noncurrent_version_transition.value.storage_class
         }
       }
-
-      dynamic "transition" {
-        for_each = lookup(lifecycle_rule.value, "transition", [])
-        content {
-          date          = lookup(transition.value, "date", null)
-          days          = lookup(transition.value, "days", null)
-          storage_class = transition.value.storage_class
-        }
-      }
     }
-  }
-
-  dynamic "cors_rule" {
-    for_each = var.cors_rule
-    content {
-      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
-      # which keys might be set in maps assigned here, so it has
-      # produced a comprehensive set here. Consider simplifying
-      # this after confirming which keys can be set in practice.
-
-      allowed_headers = lookup(cors_rule.value, "allowed_headers", null)
-      allowed_methods = cors_rule.value.allowed_methods
-      allowed_origins = cors_rule.value.allowed_origins
-      expose_headers  = lookup(cors_rule.value, "expose_headers", null)
-      max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
-    }
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  versioning {
-    enabled = var.versioning
-  }
-
-  dynamic "logging" {
-    for_each = var.logging_enabled == true ? [1] : []
-    content {
-      target_bucket = var.log_target_bucket
-      target_prefix = var.log_path
-    }
-  }
-
-  tags = {
-    namespace              = var.namespace
-    business-unit          = var.business-unit
-    application            = var.application
-    is-production          = var.is-production
-    environment-name       = var.environment-name
-    owner                  = var.team_name
-    infrastructure-support = var.infrastructure-support
   }
 }
 
