@@ -26,14 +26,54 @@ locals {
 
 resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
-  acl           = var.acl
   force_destroy = "true"
   policy        = data.template_file.bucket_policy.rendered
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
+  dynamic "lifecycle_rule" {
+    for_each = var.lifecycle_rule
+    content {
+      # TF-UPGRADE-TODO: The automatic upgrade tool can't predict
+      # which keys might be set in maps assigned here, so it has
+      # produced a comprehensive set here. Consider simplifying
+      # this after confirming which keys can be set in practice.
+
+      abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
+      enabled                                = lifecycle_rule.value.enabled
+      id                                     = lookup(lifecycle_rule.value, "id", null)
+      prefix                                 = lookup(lifecycle_rule.value, "prefix", null)
+      tags                                   = lookup(lifecycle_rule.value, "tags", null)
+
+      dynamic "expiration" {
+        for_each = lookup(lifecycle_rule.value, "expiration", [])
+        content {
+          date                         = lookup(expiration.value, "date", null)
+          days                         = lookup(expiration.value, "days", null)
+          expired_object_delete_marker = lookup(expiration.value, "expired_object_delete_marker", null)
+        }
+      }
+
+      dynamic "noncurrent_version_expiration" {
+        for_each = lookup(lifecycle_rule.value, "noncurrent_version_expiration", [])
+        content {
+          days = lookup(noncurrent_version_expiration.value, "days", null)
+        }
+      }
+
+      dynamic "noncurrent_version_transition" {
+        for_each = lookup(lifecycle_rule.value, "noncurrent_version_transition", [])
+        content {
+          days          = lookup(noncurrent_version_transition.value, "days", null)
+          storage_class = noncurrent_version_transition.value.storage_class
+        }
+      }
+
+      dynamic "transition" {
+        for_each = lookup(lifecycle_rule.value, "transition", [])
+        content {
+          date          = lookup(transition.value, "date", null)
+          days          = lookup(transition.value, "days", null)
+          storage_class = transition.value.storage_class
+        }
       }
     }
   }
@@ -53,14 +93,14 @@ resource "aws_s3_bucket_versioning" "versioning_s3" {
 
   bucket = aws_s3_bucket.bucket.id
   versioning_configuration {
-    status = local.versioning
+    status     = local.versioning
     mfa_delete = local.versioning
   }
 }
 
 resource "aws_s3_bucket_cors_configuration" "cors_s3" {
   count = length(var.cors_rule) > 0 ? 1 : 0
-  
+
   bucket = aws_s3_bucket.bucket.id
 
   dynamic "cors_rule" {
@@ -84,55 +124,20 @@ resource "aws_s3_bucket_logging" "logging_s3" {
   target_prefix = var.log_path
 }
 
-resource "aws_s3_bucket_lifecycle_configuration" "lifecycle_s3" {
-  count =  length(var.lifecycle_rule) > 0 ? 1 : 0
+resource "aws_s3_bucket_server_side_encryption_configuration" "server_side_encryption_s3" {
 
   bucket = aws_s3_bucket.bucket.id
 
-  dynamic "rule" {
-    for_each = var.lifecycle_rule
-
-    content {
-      abort_incomplete_multipart_upload_days = lookup(lifecycle_rule.value, "abort_incomplete_multipart_upload_days", null)
-      enabled                                = lifecycle_rule.value.enabled
-      id                                     = lookup(lifecycle_rule.value, "id", null)
-      prefix                                 = lookup(lifecycle_rule.value, "prefix", null)
-      tags                                   = lookup(lifecycle_rule.value, "tags", null)
-
-      dynamic "expiration" {
-        for_each = lookup(lifecycle_rule.value, "expiration", [])
-        content {
-          date                         = lookup(expiration.value, "date", null)
-          days                         = lookup(expiration.value, "days", null)
-          expired_object_delete_marker = lookup(expiration.value, "expired_object_delete_marker", null)
-        }
-      }
-
-      dynamic "transition" {
-        for_each = lookup(lifecycle_rule.value, "transition", [])
-        content {
-          date          = lookup(transition.value, "date", null)
-          days          = lookup(transition.value, "days", null)
-          storage_class = transition.value.storage_class
-        }
-      }
-
-      dynamic "noncurrent_version_expiration" {
-        for_each = lookup(lifecycle_rule.value, "noncurrent_version_expiration", [])
-        content {
-          days = lookup(noncurrent_version_expiration.value, "days", null)
-        }
-      }
-
-      dynamic "noncurrent_version_transition" {
-        for_each = lookup(lifecycle_rule.value, "noncurrent_version_transition", [])
-        content {
-          days          = lookup(noncurrent_version_transition.value, "days", null)
-          storage_class = noncurrent_version_transition.value.storage_class
-        }
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
+}
+
+resource "aws_s3_bucket_acl" "acl_s3" {
+  bucket = aws_s3_bucket.bucket.id
+  acl    = var.acl
 }
 
 resource "aws_iam_user" "user" {
