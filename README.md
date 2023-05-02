@@ -66,19 +66,72 @@ module "s3" {
 See the [example/](example/) folder for more information.
 
 <!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.5 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.27.0 |
+| <a name="requirement_random"></a> [random](#requirement\_random) | >= 2.0.0 |
+| <a name="requirement_template"></a> [template](#requirement\_template) | >= 2.0.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.27.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | >= 2.0.0 |
+| <a name="provider_template"></a> [template](#provider\_template) | >= 2.0.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_iam_access_key.user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_access_key) | resource |
+| [aws_iam_user.user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user) | resource |
+| [aws_iam_user_policy.policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_user_policy) | resource |
+| [aws_s3_bucket.bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
+| [aws_s3_bucket_public_access_block.block_public_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
+| [random_id.id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+| [aws_iam_policy_document.policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [template_file.bucket_policy](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.user_policy](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| acl | acl manages access to your bucket | string | `private` | no |
-| bucket_policy | The S3 bucket policy to set. If empty, no policy will be set | string | `""` | no |
-| user_policy | The IAM policy to assign to the generated user. If empty, the default policy is used | string | `""` | no |
-| versioning | version objects stored within your bucket. | boolean | `false` | no |
-| logging_enabled | When set to true enables logging
-| log_target_bucket | Target bucket where logs are to be delivered to
-  log_path           | Path of logs on the target bucket e.g log/
-| providers | provider to use | array of string | default provider | no
-| bucket_name | bucket_name, not recommended | string| empty, auto-generated | no
+|------|-------------|------|---------|:--------:|
+| <a name="input_acl"></a> [acl](#input\_acl) | The bucket ACL to set | `string` | `"private"` | no |
+| <a name="input_application"></a> [application](#input\_application) | Your application name | `string` | n/a | yes |
+| <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | Set the name of the S3 bucket. If left blank, a name will be automatically generated (recommended) | `string` | `""` | no |
+| <a name="input_bucket_policy"></a> [bucket\_policy](#input\_bucket\_policy) | The S3 bucket policy to set. If empty, no policy will be set | `string` | `""` | no |
+| <a name="input_business-unit"></a> [business-unit](#input\_business-unit) | Area of the MOJ responsible for the service | `string` | `"mojdigital"` | no |
+| <a name="input_cors_rule"></a> [cors\_rule](#input\_cors\_rule) | cors rule | `any` | `[]` | no |
+| <a name="input_enable_allow_block_pub_access"></a> [enable\_allow\_block\_pub\_access](#input\_enable\_allow\_block\_pub\_access) | Enable whether to allow for the bucket to be blocked from public access | `bool` | `true` | no |
+| <a name="input_environment-name"></a> [environment-name](#input\_environment-name) | Your environment name | `string` | n/a | yes |
+| <a name="input_infrastructure-support"></a> [infrastructure-support](#input\_infrastructure-support) | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | `string` | n/a | yes |
+| <a name="input_is-production"></a> [is-production](#input\_is-production) | Whether this S3 bucket is for production or not | `string` | `"false"` | no |
+| <a name="input_lifecycle_rule"></a> [lifecycle\_rule](#input\_lifecycle\_rule) | lifecycle | `any` | `[]` | no |
+| <a name="input_log_path"></a> [log\_path](#input\_log\_path) | Set the path of the logs | `string` | `""` | no |
+| <a name="input_log_target_bucket"></a> [log\_target\_bucket](#input\_log\_target\_bucket) | Set the target bucket for logs | `string` | `""` | no |
+| <a name="input_logging_enabled"></a> [logging\_enabled](#input\_logging\_enabled) | Set the logging for bucket | `bool` | `false` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Your namespace | `string` | n/a | yes |
+| <a name="input_team_name"></a> [team\_name](#input\_team\_name) | Your team name | `string` | n/a | yes |
+| <a name="input_user_policy"></a> [user\_policy](#input\_user\_policy) | The IAM policy to assign to the generated user. If empty, the default policy is used | `string` | `""` | no |
+| <a name="input_versioning"></a> [versioning](#input\_versioning) | Enable object versioning for the bucket | `bool` | `false` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_access_key_id"></a> [access\_key\_id](#output\_access\_key\_id) | Access key id for s3 account |
+| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | Arn for s3 bucket created |
+| <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | bucket name |
+| <a name="output_secret_access_key"></a> [secret\_access\_key](#output\_secret\_access\_key) | Secret key for s3 account |
 <!-- END_TF_DOCS -->
 
 ## Tags
