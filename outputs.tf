@@ -20,3 +20,6 @@ output "bucket_name" {
   value       = aws_s3_bucket.bucket.id
 }
 
+output "irsa_policy_arn" {
+  value = aws_iam_policy.irsa.arn
+}
