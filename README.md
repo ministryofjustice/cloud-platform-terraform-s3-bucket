@@ -1,12 +1,8 @@
-# cloud-platform-terraform-s3-bucket module
+# cloud-platform-terraform-s3-bucket
 
 [![Releases](https://img.shields.io/github/release/ministryofjustice/cloud-platform-terraform-s3-bucket/all.svg?style=flat-square)](https://github.com/ministryofjustice/cloud-platform-terraform-s3-bucket/releases)
 
-Terraform module that will create an S3 bucket in AWS and a relevant user account that will have access to bucket.
-
-The bucket created will have a randomised name of the format `cloud-platform-7a5c4a2a7e2134a`. This ensures that the bucket created is globally unique.
-
-The bucket will be encrypted at rest using AES256 [see main.tf](https://github.com/ministryofjustice/cloud-platform-terraform-s3-bucket/blob/main/main.tf#L103-L109)
+This Terraform module will create an [Amazon S3](https://aws.amazon.com/s3/) bucket for use on the Cloud Platform.
 
 ## Usage
 
@@ -15,18 +11,20 @@ Be sure to create the relevant providers, see example/main.tf
 From module version 3.2, this replaces the use of the `aws-s3-region`.**
 
 ```hcl
-module "example_team_s3" {
-  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=4.2"
+module "s3" {
+  source = "github.com/ministryofjustice/cloud-platform-terraform-s3-bucket?ref=version" # use the latest release
 
-  team_name              = "example-repo"
-  acl                    = "public-read"
-  versioning             =  true
-  business-unit          = "example-bu"
-  application            = "example-app"
-  is-production          = "false"
-  environment-name       = "development"
-  infrastructure-support = "example-team@digtal.justice.gov.uk"
+  # S3 configuration
+  versioning = true
 
+  # Tags
+  business-unit          = var.business_unit
+  application            = var.application
+  is-production          = var.is_production
+  team_name              = var.team_name
+  namespace              = var.namespace
+  environment-name       = var.environment
+  infrastructure-support = var.infrastructure_support
  /* 
 
   * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
@@ -65,6 +63,9 @@ module "example_team_s3" {
 }
 ```
 
+See the [example/](example/) folder for more information.
+
+<!-- BEGIN_TF_DOCS -->
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -78,31 +79,13 @@ module "example_team_s3" {
   log_path           | Path of logs on the target bucket e.g log/
 | providers | provider to use | array of string | default provider | no
 | bucket_name | bucket_name, not recommended | string| empty, auto-generated | no
+<!-- END_TF_DOCS -->
 
+## Tags
 
+Some of the inputs for this module are tags. All infrastructure resources must be tagged to meet the MOJ Technical Guidance on [Documenting owners of infrastructure](https://technical-guidance.service.justice.gov.uk/documentation/standards/documenting-infrastructure-owners.html).
 
-### Tags
-
-Some of the inputs are tags. All infrastructure resources need to be tagged according to the [MOJ techincal guidence](https://technical-guidance.service.justice.gov.uk/documentation/standards/documenting-infrastructure-owners.html). The tags are stored as variables that you will need to fill out as part of your module.
-
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| application |  | string | - | yes |
-| business-unit | Area of the MOJ responsible for the service | string | `mojdigital` | yes |
-| environment-name |  | string | - | yes |
-| infrastructure-support | The team responsible for managing the infrastructure. Should be of the form team-email | string | - | yes |
-| is-production |  | string | `false` | yes |
-| team_name |  | string | - | yes |
-
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| access_key_id | Access key id for s3 account |
-| bucket_arn | Arn for s3 bucket created |
-| bucket_name | bucket name |
-| secret_access_key | Secret key for s3 account |
+You should use your namespace variables to populate these. See the [Usage](#usage) section for more information.
 
 ## Migrate from existing buckets
 
