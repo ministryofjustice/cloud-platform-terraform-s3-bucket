@@ -83,7 +83,7 @@ module "example_team_s3" {
 
 ### Tags
 
-Some of the inputs are tags. All infrastructure resources need to be tagged according to the [MOJ techincal guidence](https://ministryofjustice.github.io/technical-guidance/standards/documenting-infrastructure-owners/#documenting-owners-of-infrastructure). The tags are stored as variables that you will need to fill out as part of your module.
+Some of the inputs are tags. All infrastructure resources need to be tagged according to the [MOJ techincal guidence](https://technical-guidance.service.justice.gov.uk/documentation/standards/documenting-infrastructure-owners.html). The tags are stored as variables that you will need to fill out as part of your module.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
