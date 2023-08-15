@@ -25,25 +25,25 @@ module "s3" {
   namespace              = var.namespace
   environment-name       = var.environment
   infrastructure-support = var.infrastructure_support
- /* 
+ /*
 
-  * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary. 
+  * Public Buckets: It is strongly advised to keep buckets 'private' and only make public where necessary.
                     By default buckets are private, however to create a 'public' bucket add the following two variables when calling the module:
 
                     acl                           = "public-read"
                     enable_allow_block_pub_access = false
 
-                    For more information granting public access to S3 buckets, please see AWS documentation: 
+                    For more information granting public access to S3 buckets, please see AWS documentation:
                     https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html
 
   * Converting existing private bucket to public: If amending an existing private bucket that was created using version 4.3 or above then you will need to raise two PRs:
-                    
+
                     (1) First PR to add the var: enable_allow_block_pub_access = false
                     (2) Second PR to add the var: acl = "public-read"
 
   * Versioning: By default this is set to false. When set to true multiple versions of an object can be stored
                 For more details on versioning please visit: https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html
-  
+
   versioning             = true
 
   * Logging: By default set to false. When you enable logging, Amazon S3 delivers access logs for a source bucket to target            bucket that you choose.
@@ -53,7 +53,7 @@ module "s3" {
   logging_enabled        = true
   log_target_bucket      = "<TARGET_BUCKET_NAME>"
   log_path               = "<LOG_PATH>" e.g log/
-  
+
 */
 
   # This is a new input.
