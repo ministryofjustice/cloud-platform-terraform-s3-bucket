@@ -71,7 +71,7 @@ See the [example/](example/) folder for more information.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2.5 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.27.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 2.0.0 |
 | <a name="requirement_template"></a> [template](#requirement\_template) | >= 2.0.0 |
 
@@ -79,7 +79,7 @@ See the [example/](example/) folder for more information.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.27.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 2.0.0 |
 | <a name="provider_template"></a> [template](#provider\_template) | >= 2.0.0 |
 
@@ -108,21 +108,21 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_acl"></a> [acl](#input\_acl) | The bucket ACL to set | `string` | `"private"` | no |
-| <a name="input_application"></a> [application](#input\_application) | Your application name | `string` | n/a | yes |
+| <a name="input_application"></a> [application](#input\_application) | Application name | `string` | n/a | yes |
 | <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | Set the name of the S3 bucket. If left blank, a name will be automatically generated (recommended) | `string` | `""` | no |
 | <a name="input_bucket_policy"></a> [bucket\_policy](#input\_bucket\_policy) | The S3 bucket policy to set. If empty, no policy will be set | `string` | `""` | no |
-| <a name="input_business-unit"></a> [business-unit](#input\_business-unit) | Area of the MOJ responsible for the service | `string` | `"mojdigital"` | no |
+| <a name="input_business_unit"></a> [business\_unit](#input\_business\_unit) | Area of the MOJ responsible for the service | `string` | n/a | yes |
 | <a name="input_cors_rule"></a> [cors\_rule](#input\_cors\_rule) | cors rule | `any` | `[]` | no |
 | <a name="input_enable_allow_block_pub_access"></a> [enable\_allow\_block\_pub\_access](#input\_enable\_allow\_block\_pub\_access) | Enable whether to allow for the bucket to be blocked from public access | `bool` | `true` | no |
-| <a name="input_environment-name"></a> [environment-name](#input\_environment-name) | Your environment name | `string` | n/a | yes |
-| <a name="input_infrastructure-support"></a> [infrastructure-support](#input\_infrastructure-support) | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | `string` | n/a | yes |
-| <a name="input_is-production"></a> [is-production](#input\_is-production) | Whether this S3 bucket is for production or not | `string` | `"false"` | no |
+| <a name="input_environment_name"></a> [environment\_name](#input\_environment\_name) | Environment name | `string` | n/a | yes |
+| <a name="input_infrastructure_support"></a> [infrastructure\_support](#input\_infrastructure\_support) | The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>) | `string` | n/a | yes |
+| <a name="input_is_production"></a> [is\_production](#input\_is\_production) | Whether this is used for production or not | `string` | n/a | yes |
 | <a name="input_lifecycle_rule"></a> [lifecycle\_rule](#input\_lifecycle\_rule) | lifecycle | `any` | `[]` | no |
 | <a name="input_log_path"></a> [log\_path](#input\_log\_path) | Set the path of the logs | `string` | `""` | no |
 | <a name="input_log_target_bucket"></a> [log\_target\_bucket](#input\_log\_target\_bucket) | Set the target bucket for logs | `string` | `""` | no |
 | <a name="input_logging_enabled"></a> [logging\_enabled](#input\_logging\_enabled) | Set the logging for bucket | `bool` | `false` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Your namespace | `string` | n/a | yes |
-| <a name="input_team_name"></a> [team\_name](#input\_team\_name) | Your team name | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace name | `string` | n/a | yes |
+| <a name="input_team_name"></a> [team\_name](#input\_team\_name) | Team name | `string` | n/a | yes |
 | <a name="input_user_policy"></a> [user\_policy](#input\_user\_policy) | The IAM policy to assign to the generated user. If empty, the default policy is used | `string` | `""` | no |
 | <a name="input_versioning"></a> [versioning](#input\_versioning) | Enable object versioning for the bucket | `bool` | `false` | no |
 
