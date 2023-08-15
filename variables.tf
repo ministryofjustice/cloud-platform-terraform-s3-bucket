@@ -1,40 +1,6 @@
-variable "team_name" {
-  description = "Your team name"
-  type        = string
-}
-
-variable "application" {
-  description = "Your application name"
-  type        = string
-}
-
-variable "environment-name" {
-  description = "Your environment name"
-  type        = string
-}
-
-variable "namespace" {
-  description = "Your namespace"
-  type        = string
-}
-
-variable "business-unit" {
-  description = "Area of the MOJ responsible for the service"
-  default     = "mojdigital"
-  type        = string
-}
-
-variable "is-production" {
-  default     = "false"
-  description = "Whether this S3 bucket is for production or not"
-  type        = string
-}
-
-variable "infrastructure-support" {
-  description = "The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>)"
-  type        = string
-}
-
+#################
+# Configuration #
+#################
 variable "acl" {
   description = "The bucket ACL to set"
   default     = "private"
@@ -99,4 +65,42 @@ variable "enable_allow_block_pub_access" {
   description = "Enable whether to allow for the bucket to be blocked from public access"
   default     = true
   type        = bool
+}
+
+########
+# Tags #
+########
+variable "business_unit" {
+  description = "Area of the MOJ responsible for the service"
+  type        = string
+}
+
+variable "application" {
+  description = "Application name"
+  type        = string
+}
+
+variable "is_production" {
+  description = "Whether this is used for production or not"
+  type        = string
+}
+
+variable "team_name" {
+  description = "Team name"
+  type        = string
+}
+
+variable "namespace" {
+  description = "Namespace name"
+  type        = string
+}
+
+variable "environment_name" {
+  description = "Environment name"
+  type        = string
+}
+
+variable "infrastructure_support" {
+  description = "The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>)"
+  type        = string
 }
