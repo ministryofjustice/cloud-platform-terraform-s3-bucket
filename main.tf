@@ -1,7 +1,34 @@
+locals {
+  # Generic configuration
+  bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
+
+  # Tags
+  default_tags = {
+    # Mandatory
+    business-unit = var.business_unit
+    application   = var.application
+    is-production = var.is_production
+    owner         = var.team_name
+    namespace     = var.namespace # for billing and identification purposes
+
+    # Optional
+    environment-name       = var.environment_name
+    infrastructure-support = var.infrastructure_support
+  }
+}
+
+########################
+# Generate identifiers #
+########################
 resource "random_id" "id" {
   byte_length = 16
 }
 
+#####################
+# Generate policies #
+#####################
+# TODO: the `template` provider has been deprecated, these need to be removed in a future release.
 data "template_file" "bucket_policy" {
   template = var.bucket_policy
 
@@ -10,6 +37,7 @@ data "template_file" "bucket_policy" {
   }
 }
 
+# TODO: the `template` provider has been deprecated, these need to be removed in a future release.
 data "template_file" "user_policy" {
   template = var.user_policy
 
@@ -18,21 +46,11 @@ data "template_file" "user_policy" {
   }
 }
 
-locals {
-  bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
-  s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
-
-  default_tags = {
-    namespace              = var.namespace
-    business-unit          = var.business_unit
-    application            = var.application
-    is-production          = var.is_production
-    environment-name       = var.environment_name
-    owner                  = var.team_name
-    infrastructure-support = var.infrastructure_support
-  }
-}
-
+#################
+# Create bucket #
+#################
+# TODO: Split sub-resources into their own resources as part of the terraform-provider-aws
+# v4.0.0 release.
 resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
   acl           = var.acl
@@ -135,6 +153,9 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
+##############################
+# Create public access block #
+##############################
 resource "aws_s3_bucket_public_access_block" "block_public_access" {
   count  = var.enable_allow_block_pub_access ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
@@ -206,7 +227,9 @@ resource "aws_iam_user_policy" "policy" {
   user   = aws_iam_user.user.name
 }
 
-# Short-lived credentials (IRSA)
+##############################
+# Create IAM role for access #
+##############################
 data "aws_iam_policy_document" "irsa" {
   version = "2012-10-17"
   statement {
@@ -219,7 +242,7 @@ data "aws_iam_policy_document" "irsa" {
       "s3:ListBucketMultipartUploads",
       "s3:ListBucketVersions",
     ]
-    resources = [local.s3_bucket_arn] # todo: fix
+    resources = [local.s3_bucket_arn]
   }
 
   statement {
