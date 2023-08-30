@@ -273,9 +273,10 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_access_key_id"></a> [access\_key\_id](#output\_access\_key\_id) | Access key id for s3 account |
-| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | Arn for s3 bucket created |
-| <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | bucket name |
-| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | n/a |
+| <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | S3 bucket ARN |
+| <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | Regional bucket domain name |
+| <a name="output_bucket_name"></a> [bucket\_name](#output\_bucket\_name) | S3 bucket name |
+| <a name="output_irsa_policy_arn"></a> [irsa\_policy\_arn](#output\_irsa\_policy\_arn) | IAM policy ARN for access to the S3 bucket |
 | <a name="output_secret_access_key"></a> [secret\_access\_key](#output\_secret\_access\_key) | Secret key for s3 account |
 <!-- END_TF_DOCS -->
 
