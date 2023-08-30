@@ -51,7 +51,7 @@ module "s3_bucket" {
 
 */
 
-    /*
+  /*
    * The following example can be used if you need to define CORS rules for your s3 bucket.
    *  Follow the guidance here "https://www.terraform.io/docs/providers/aws/r/s3_bucket.html#using-cors"
    *
@@ -112,13 +112,13 @@ module "s3_bucket" {
 
   */
 
-    /*
+  /*
    * The following are exampls of bucket and user policies. They are treated as
    * templates. Currently, the only available variable is `$${bucket_arn}`.
    *
    */
 
-    /*
+  /*
  * Allow a user (foobar) from another account (012345678901) to get objects from
  * this bucket.
  *
@@ -145,7 +145,7 @@ EOF
 
 */
 
-    /*
+  /*
  * Override the default policy for the generated machine user of this bucket.
  *
 
