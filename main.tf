@@ -233,7 +233,7 @@ resource "aws_iam_user_policy" "policy" {
 data "aws_iam_policy_document" "irsa" {
   version = "2012-10-17"
   statement {
-    sid    = "AllowBucketActions"
+    sid    = "AllowBucketActionsFor${random_id.id.hex}"
     effect = "Allow"
     actions = [
       "s3:GetBucketLocation",
@@ -246,7 +246,7 @@ data "aws_iam_policy_document" "irsa" {
   }
 
   statement {
-    sid    = "AllowObjectActions"
+    sid    = "AllowObjectActionsFor${random_id.id.hex}"
     effect = "Allow"
     actions = [
       "s3:AbortMultipartUpload",
