@@ -37,15 +37,6 @@ data "template_file" "bucket_policy" {
   }
 }
 
-# TODO: the `template` provider has been deprecated, these need to be removed in a future release.
-data "template_file" "user_policy" {
-  template = var.user_policy
-
-  vars = {
-    bucket_arn = "arn:aws:s3:::${local.bucket_name}"
-  }
-}
-
 #################
 # Create bucket #
 #################
@@ -164,67 +155,6 @@ resource "aws_s3_bucket_public_access_block" "block_public_access" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-# Legacy long-lived credentials
-resource "aws_iam_user" "user" {
-  name = "s3-bucket-user-${random_id.id.hex}"
-  path = "/system/s3-bucket-user/"
-}
-
-resource "aws_iam_access_key" "user" {
-  user = aws_iam_user.user.name
-}
-
-data "aws_iam_policy_document" "policy" {
-  statement {
-    actions = [
-      "s3:GetBucketLocation",
-      "s3:GetBucketPolicy",
-      "s3:ListBucket",
-      "s3:ListBucketMultipartUploads",
-      "s3:ListBucketVersions",
-    ]
-
-    resources = [
-      local.s3_bucket_arn,
-    ]
-  }
-
-  statement {
-    actions = [
-      "s3:AbortMultipartUpload",
-      "s3:DeleteObject",
-      "s3:DeleteObjectTagging",
-      "s3:DeleteObjectVersion",
-      "s3:DeleteObjectVersionTagging",
-      "s3:GetObject",
-      "s3:GetObjectAcl",
-      "s3:GetObjectTagging",
-      "s3:GetObjectTorrent",
-      "s3:GetObjectVersion",
-      "s3:GetObjectVersionAcl",
-      "s3:GetObjectVersionTagging",
-      "s3:GetObjectVersionTorrent",
-      "s3:ListMultipartUploadParts",
-      "s3:PutObject",
-      "s3:PutObjectAcl",
-      "s3:PutObjectTagging",
-      "s3:PutObjectVersionAcl",
-      "s3:PutObjectVersionTagging",
-      "s3:RestoreObject",
-    ]
-
-    resources = [
-      "${local.s3_bucket_arn}/*",
-    ]
-  }
-}
-
-resource "aws_iam_user_policy" "policy" {
-  name   = "s3-bucket-read-write"
-  policy = data.template_file.user_policy.rendered == "" ? data.aws_iam_policy_document.policy.json : data.template_file.user_policy.rendered
-  user   = aws_iam_user.user.name
 }
 
 ##############################

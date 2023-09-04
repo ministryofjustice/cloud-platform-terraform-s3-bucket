@@ -13,12 +13,6 @@ variable "bucket_policy" {
   type        = string
 }
 
-variable "user_policy" {
-  description = "The IAM policy to assign to the generated user. If empty, the default policy is used"
-  default     = ""
-  type        = string
-}
-
 variable "versioning" {
   description = "Enable object versioning for the bucket"
   default     = false
