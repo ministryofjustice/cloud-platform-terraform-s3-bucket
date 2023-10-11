@@ -28,13 +28,8 @@ resource "random_id" "id" {
 #####################
 # Generate policies #
 #####################
-# TODO: the `template` provider has been deprecated, these need to be removed in a future release.
-data "template_file" "bucket_policy" {
-  template = var.bucket_policy
-
-  vars = {
-    bucket_arn = "arn:aws:s3:::${local.bucket_name}"
-  }
+locals {
+  bucket_policy = replace(var.bucket_policy, "$${bucket_arn}", "arn:aws:s3:::${local.bucket_name}")
 }
 
 #################
@@ -46,7 +41,7 @@ resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
   acl           = var.acl
   force_destroy = "true"
-  policy        = data.template_file.bucket_policy.rendered
+  policy        = local.bucket_policy
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
