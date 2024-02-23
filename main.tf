@@ -163,6 +163,8 @@ data "aws_iam_policy_document" "irsa" {
     actions = [
       "s3:GetBucketLocation",
       "s3:GetBucketPolicy",
+      "s3:GetBucketPublicAccessBlock",
+      "s3:GetBucketOwnershipControls",
       "s3:ListBucket",
       "s3:ListBucketMultipartUploads",
       "s3:ListBucketVersions",
