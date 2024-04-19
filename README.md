@@ -26,42 +26,110 @@ module "s3" {
 
 ### Migrate from existing buckets
 
-<!-- TODO: Needs rewriting after removal of access keys. -->
+You can use a combination of the [Cloud Platform IRSA module](https://github.com/ministryofjustice/cloud-platform-terraform-irsa) and [Service pod module](https://github.com/ministryofjustice/cloud-platform-terraform-service-pod) to access your source bucket using the AWS CLI.
 
-The `user_policy` input is useful when migrating data from existing bucket(s). For commands like `s3 ls` or `s3 sync` to work across accounts, a policy granting access must be set in 2 places: the *source bucket* and the *destination user*
+#### IRSA and Service Pod example configuration
+
+In the [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments) repository, within your namespace which contains your destination s3 bucket configuration, add the following terraform, substituting values as necessary:
+
+```
+module "cross_irsa" {
+  source                 = "github.com/ministryofjustice/cloud-platform-terraform-irsa?ref=[latest-release-here]"
+  business_unit          = var.business_unit
+  application            = var.application
+  eks_cluster_name       = var.eks_cluster_name
+  namespace              = var.namespace
+  service_account_name   = "${var.namespace}-cross-service"
+  is_production          = var.is_production
+  team_name              = var.team_name
+  environment_name       = var.environment
+  infrastructure_support = var.infrastructure_support
+  role_policy_arns       = { s3 = aws_iam_policy.s3_migrate_policy.arn }
+}
+
+data "aws_iam_policy_document" "s3_migrate_policy" {
+  # List & location for source & destination S3 bucket.
+  statement {
+    actions = [ 
+      "s3:ListBucket",
+      "s3:GetBucketLocation"
+    ]
+    resources = [ 
+      module.s3_bucket.bucket_arn,
+      "arn:aws:s3:::[source-bucket-name]"
+    ]
+  }
+  # Permissions on source S3 bucket contents. 
+  statement {
+    actions = [ 
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:GetObjectTagging"
+    ]
+    resources = [ "arn:aws:s3:::[source-bucket-name]/*" ]   # take note of trailing /* here
+  }
+  # Permissions on destination S3 bucket contents. 
+  statement {
+    actions = [
+      "s3:PutObject",
+      "s3:PutObjectTagging",
+      "s3:GetObject",
+      "s3:DeleteObject"
+    ]
+    resources = [ "${module.s3_bucket.bucket_arn}/*" ]
+  }
+}
+
+resource "aws_iam_policy" "s3_migrate_policy" {
+  name   = "s3_migrate_policy"
+  policy = data.aws_iam_policy_document.s3_migrate_policy.json
+
+  tags = {
+    business-unit          = var.business_unit
+    application            = var.application
+    is-production          = var.is_production
+    environment-name       = var.environment
+    owner                  = var.team_name
+    infrastructure-support = var.infrastructure_support
+  }
+}
+
+# store irsa rolearn in k8s secret for retrieving to provide within source bucket policy
+resource "kubernetes_secret" "cross_irsa" {
+  metadata {
+    name      = "cross-irsa-output"
+    namespace = var.namespace
+  }
+  data = {
+    role           = module.cross_irsa.role_name
+    rolearn        = module.cross_irsa.role_arn
+    serviceaccount = module.cross_irsa.service_account.name
+  }
+}
+
+# set up the service pod
+module "cross_service_pod" {
+  source = "github.com/ministryofjustice/cloud-platform-terraform-service-pod?ref=[latest-release-here]"
+  namespace            = var.namespace
+  service_account_name = module.cross_irsa.service_account.name
+}
+```
 
 
 #### Source bucket policy
 
-The source bucket must permit the destination s3 IAM user to "read" from its bucket explcitly.
+The source bucket must permit your IRSA role to "read" from its bucket explicitly.
 
-Example to retrieve destination IAM user for use in source bucket policy. _requires [jq - commandline JSON processer](https://stedolan.github.io/jq/)_
+First, retrieve the IRSA rolearn using cloud-platform CLI and [jq](https://jqlang.github.io/jq/)
 
-```bash
-# retrieve destination s3 user ARN
-
-# retrieve live-1 namespace's s3 credentials
-$ kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d'
-=>
-<access_key_id>
-<bucket_arn>
-<bucket_name>
-<secret_access_key>
-
-# retrieve IAM user details using credentials
-$ unset AWS_PROFILE; AWS_ACCESS_KEY_ID=<access_key_id> AWS_SECRET_ACCESS_KEY=<secret_access_key> aws sts get-caller-identity
-
-# Alternative single call in bash
-$ unset AWS_PROFILE; read K a n S <<<$(kubectl -n my-namespace get secret my-s3-secrets -o json | jq -r '.data[] | @base64d') ; AWS_ACCESS_KEY_ID=$K AWS_SECRET_ACCESS_KEY=$S aws sts get-caller-identity
+```
+cloud-platform decode-secret -s cross-irsa-output | jq -r '.data.rolearn'
 ```
 
 You should get output similar to below:
-```json
-{
-"UserId": "<userid>",
-"Account": "<accountid>",
-"Arn": "arn:aws:iam::<accountid>:user/system/s3-bucket-user/<team>/<random-s3-bucket-username>"
-}
+
+```
+arn:aws:iam::754256621582:role/cloud-platform-irsa-randomstring1234
 ```
 
 Example for the source bucket (using retrieved ARN from above):
@@ -78,7 +146,7 @@ Example for the source bucket (using retrieved ARN from above):
                 "s3:GetObject"
             ],
             "Principal": {
-                "AWS": "arn:aws:iam::<accountid>:user/system/s3-bucket-user/<team>/s3-bucket-user-random"
+                "AWS": "arn:aws:iam::754256621582:role/cloud-platform-irsa-randomstring1234"
             },
             "Resource": [
                 "arn:aws:s3:::source-bucket",
@@ -91,55 +159,19 @@ Example for the source bucket (using retrieved ARN from above):
 
 Note the bucket being listed twice, this is needed not a typo - the first is for the bucket itself, second for objects within it.
 
-#### Destination IAM user policy
-Example for the destination IAM user created by this module:
-
-```
-  user_policy = <<EOF
-{
-"Version": "2012-10-17",
-"Statement": [
-  {
-    "Sid": "",
-    "Effect": "Allow",
-    "Action": [
-      "s3:GetBucketLocation",
-      "s3:ListBucket"
-    ],
-    "Resource": [
-      "$${bucket_arn}",
-      "arn:aws:s3:::source-bucket"
-    ]
-  },
-  {
-    "Sid": "",
-    "Effect": "Allow",
-    "Action": [
-      "s3:*"
-    ],
-    "Resource": [
-      "$${bucket_arn}/*",
-      "arn:aws:s3:::source-bucket/*"
-    ]
-  }
-]
-}
-EOF
-```
-
 #### Synchronization
 
-Once configured the following, executed within a relevantly provisioned pod in the destination namespace, will add new, update existing and delete objects (not in source).
+Once configured, you can exec into your service pod and execute the following. This will add new, update existing and delete objects (not in source).
 
 ```bash
+kubectl exec --stdin --tty cloud-platform-7e1f25a0c851c02c-service-pod-abc123 -- /bin/sh
+
 aws s3 sync --delete \
   s3://source_bucket_name \
   s3://destination_bucket_name \
   --source-region source_region \
   --region destination_region
 ```
-
-For an example of a pod with a custom CLI that wraps s3 sync you can see the [cccd-migrator](https://github.com/ministryofjustice/cccd-migrator)
 
 #### Decompressing Files Stored in S3
 
@@ -160,10 +192,11 @@ spec:
   backoffLimit: 0
   template:
     spec:
+      serviceAccountName: irsa-service-account-name 
       restartPolicy: Never
       containers:
         - name: tools
-          image: ministryofjustice/cloud-platform-tools:1.43
+          image: ministryofjustice/cloud-platform-tools:2.9.0
           command:
             - /bin/bash
             - -c
@@ -173,10 +206,6 @@ spec:
                 | bunzip2 \
                 | aws s3 cp - s3://${S3_BUCKET}/<filename>
           env:
-            - name: AWS_ACCESS_KEY_ID
-              value: <aws-access-key-id>
-            - name: AWS_SECRET_ACCESS_KEY
-              value: <aws-secret-access-key>
             - name: S3_BUCKET
               value: <s3-bucket-name>
           resources: {}
@@ -206,6 +235,14 @@ spec:
     requests:
       storage: 50Gi
 ```
+
+For further guidance on using IRSA, for example accessing AWS buckets in different accounts, see the following links:
+
+[Use IAM Roles for service accounts to access resources in a different AWS account](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/access-cross-aws-resources-irsa-eks.html)
+
+[Accessing AWS APIs and resources from your namespace](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/accessing-aws-apis-and-resources-from-your-namespace.html#accessing-aws-apis-and-resources-from-your-namespace)
+
+[Cloud Platform service pod for AWS CLI access]https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/cloud-platform-service-pod.html)
 
 See the [examples/](examples/) folder for more information.
 
