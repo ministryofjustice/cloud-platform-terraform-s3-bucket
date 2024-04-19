@@ -140,7 +140,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 ##############################
-# Create public access block #
+# Create public access block  #
 ##############################
 resource "aws_s3_bucket_public_access_block" "block_public_access" {
   count  = var.enable_allow_block_pub_access ? 1 : 0
