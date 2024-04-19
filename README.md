@@ -118,9 +118,9 @@ module "cross_service_pod" {
 
 #### Source bucket policy
 
-The source bucket must permit your IRSA role to "read" from its bucket explcitly.
+The source bucket must permit your IRSA role to "read" from its bucket explicitly.
 
-# retrieve IRSA rolearn using cloud-platform CLI and [jq](https://jqlang.github.io/jq/)
+First, retrieve the IRSA rolearn using cloud-platform CLI and [jq](https://jqlang.github.io/jq/)
 
 ```
 cloud-platform decode-secret -s cross-irsa-output | jq -r '.data.rolearn'
