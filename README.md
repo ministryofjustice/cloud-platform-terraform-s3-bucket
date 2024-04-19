@@ -29,6 +29,9 @@ module "s3" {
 You can use a combination of the [Cloud Platform IRSA module](https://github.com/ministryofjustice/cloud-platform-terraform-irsa) and [Service pod module](https://github.com/ministryofjustice/cloud-platform-terraform-service-pod) to access your source bucket using the AWS CLI.
 
 #### IRSA and Service Pod example configuration
+
+In the [cloud-platform-environments](https://github.com/ministryofjustice/cloud-platform-environments) repository, within your namespace which contains your destination s3 bucket configuration, add the following terraform, substituting values as necessary:
+
 ```
 module "cross_irsa" {
   source                 = "github.com/ministryofjustice/cloud-platform-terraform-irsa?ref=[latest-release-here]"
