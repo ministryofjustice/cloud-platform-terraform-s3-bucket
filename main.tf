@@ -212,7 +212,7 @@ resource "aws_iam_policy" "irsa" {
 
 
 data "aws_kms_key" "default_backup_kms" {
-  key_id = "aws/backup"
+  key_id = "alias/aws/backup"
 }
 
 resource "aws_backup_vault" "bucket_vault" {
