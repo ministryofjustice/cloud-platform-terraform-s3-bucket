@@ -256,7 +256,7 @@ resource "aws_backup_plan" "s3_backup_plan" {
 
   rule {
     rule_name         = "DailyBackups"
-    target_vault_name = aws_backup_vault.bucket_vault.name
+    target_vault_name = aws_backup_vault.bucket_vault[0].name
     schedule          = "cron(0 5 ? * * *)"
 
     lifecycle {
