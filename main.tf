@@ -270,7 +270,7 @@ resource "aws_backup_plan" "s3_backup_plan" {
 resource "aws_backup_selection" "s3" {
   count        = var.enable_backup ? 1 : 0
   iam_role_arn = aws_iam_role.s3_backup[0].arn
-  name         = "${local.bucket_name}_s3_selection"
+  name         = "${local.bucket_name}"
   plan_id      = aws_backup_plan.s3_backup_plan[0].id
 
   resources = [
