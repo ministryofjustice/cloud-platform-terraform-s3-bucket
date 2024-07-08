@@ -211,6 +211,10 @@ resource "aws_iam_policy" "irsa" {
 }
 
 
+######################
+# AWS Backups for S3 #
+######################
+
 data "aws_kms_key" "default_backup_kms" {
   key_id = "alias/aws/backup"
 }
@@ -221,6 +225,28 @@ resource "aws_backup_vault" "bucket_vault" {
   tags        = local.default_tags
 
   kms_key_arn = data.aws_kms_key.default_backup_kms.arn
+}
+
+data "aws_iam_policy_document" "backup_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["backup.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "instance" {
+  name                = "${local.bucket_name}_backup_role"
+  assume_role_policy  = data.aws_iam_policy_document.backup_assume_role_policy.json
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup",
+    "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
+    "arn:aws:iam::aws:policy/AWSBackupServiceRolePolicyForS3Backup",
+    "arn:aws:iam::aws:policy/AWSBackupServiceRolePolicyForS3Restore"
+  ]
 }
 
 
