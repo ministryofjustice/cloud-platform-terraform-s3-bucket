@@ -228,6 +228,7 @@ resource "aws_backup_vault" "bucket_vault" {
 }
 
 data "aws_iam_policy_document" "backup_assume_role_policy" {
+  count = var.enable_backup ? 1 : 0
   statement {
     actions = ["sts:AssumeRole"]
 
@@ -238,9 +239,10 @@ data "aws_iam_policy_document" "backup_assume_role_policy" {
   }
 }
 
-resource "aws_iam_role" "instance" {
+resource "aws_iam_role" "s3_backup" {
+  count               = var.enable_backup ? 1 : 0
   name                = "${local.bucket_name}_backup_role"
-  assume_role_policy  = data.aws_iam_policy_document.backup_assume_role_policy.json
+  assume_role_policy  = data.aws_iam_policy_document.backup_assume_role_policy[0].json
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup",
     "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores",
@@ -251,16 +253,27 @@ resource "aws_iam_role" "instance" {
 
 
 resource "aws_backup_plan" "s3_backup_plan" {
-  name = "${local.bucket_name}_s3_backup_plan"
+  name        = "${local.bucket_name}_s3_backup_plan"
   count       = var.enable_backup ? 1 : 0
 
   rule {
     rule_name         = "DailyBackups"
     target_vault_name = aws_backup_vault.bucket_vault[0].name
-    schedule          = "cron(0 5 ? * * *)"
+    schedule          = "cron(0 5 ? * * *)" 
 
     lifecycle {
       delete_after = 35
     }
   }
+}
+
+resource "aws_backup_selection" "s3" {
+  count        = var.enable_backup ? 1 : 0
+  iam_role_arn = aws_iam_role.s3_backup[0].arn
+  name         = "${local.bucket_name}_s3_selection"
+  plan_id      = aws_backup_plan.s3_backup_plan[0].id
+
+  resources = [
+    aws_s3_bucket.bucket.arn
+  ]
 }
