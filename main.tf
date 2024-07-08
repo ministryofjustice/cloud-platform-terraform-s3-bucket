@@ -217,7 +217,7 @@ data "aws_kms_key" "default_backup_kms" {
 
 resource "aws_backup_vault" "bucket_vault" {
   count       = var.enable_backup ? 1 : 0
-  name        = "${local.bucket_name}-backup-vault"
+  name        = "${local.bucket_name}"
   tags        = local.default_tags
 
   kms_key_arn = data.aws_kms_key.default_backup_kms.arn
