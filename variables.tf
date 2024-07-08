@@ -61,6 +61,12 @@ variable "enable_allow_block_pub_access" {
   type        = bool
 }
 
+variable "enable_backup" {
+  description = "Enable to use AWS Backup to backup the bucket"
+  default     = false
+  type        = bool
+}
+
 ########
 # Tags #
 ########

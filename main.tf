@@ -3,6 +3,8 @@ locals {
   bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
   s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 
+  versioning = var.enable_backup ? true : var.versioning
+
   # Tags
   default_tags = {
     # Mandatory
@@ -117,7 +119,7 @@ resource "aws_s3_bucket" "bucket" {
   }
 
   versioning {
-    enabled = var.versioning
+    enabled = local.versioning
   }
 
   dynamic "logging" {
@@ -207,3 +209,26 @@ resource "aws_iam_policy" "irsa" {
   policy = data.aws_iam_policy_document.irsa.json
   tags   = local.default_tags
 }
+
+
+# resource "aws_backup_vault" "bucket_vault" {
+#   count       = var.enable_backup ? 1 : 0
+#   name        = "${local.bucket_name}-backup-vault"
+#   tags        = local.default_tags
+# }
+
+
+# resource "aws_backup_plan" "bucket_plan" {
+#   name = "tf_example_backup_plan"
+#   count       = var.enable_backup ? 1 : 0
+
+#   rule {
+#     rule_name         = "DailyBackups"
+#     target_vault_name = aws_backup_vault.bucket_vault.name
+#     schedule          = "cron(0 5 ? * * *)"
+
+#     lifecycle {
+#       delete_after = 35
+#     }
+#   }
+# }
