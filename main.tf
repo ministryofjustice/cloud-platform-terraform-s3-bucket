@@ -211,11 +211,17 @@ resource "aws_iam_policy" "irsa" {
 }
 
 
-# resource "aws_backup_vault" "bucket_vault" {
-#   count       = var.enable_backup ? 1 : 0
-#   name        = "${local.bucket_name}-backup-vault"
-#   tags        = local.default_tags
-# }
+data "aws_kms_key" "default_backup_kms" {
+  key_id = "aws/backup"
+}
+
+resource "aws_backup_vault" "bucket_vault" {
+  count       = var.enable_backup ? 1 : 0
+  name        = "${local.bucket_name}-backup-vault"
+  tags        = local.default_tags
+
+  kms_key_arn = data.aws_kms_key.default_backup_kms.arn
+}
 
 
 # resource "aws_backup_plan" "bucket_plan" {
