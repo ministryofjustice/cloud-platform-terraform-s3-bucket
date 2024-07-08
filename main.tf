@@ -250,17 +250,17 @@ resource "aws_iam_role" "instance" {
 }
 
 
-# resource "aws_backup_plan" "bucket_plan" {
-#   name = "tf_example_backup_plan"
-#   count       = var.enable_backup ? 1 : 0
+resource "aws_backup_plan" "s3_backup_plan" {
+  name = "${local.bucket_name}_s3_backup_plan"
+  count       = var.enable_backup ? 1 : 0
 
-#   rule {
-#     rule_name         = "DailyBackups"
-#     target_vault_name = aws_backup_vault.bucket_vault.name
-#     schedule          = "cron(0 5 ? * * *)"
+  rule {
+    rule_name         = "DailyBackups"
+    target_vault_name = aws_backup_vault.bucket_vault.name
+    schedule          = "cron(0 5 ? * * *)"
 
-#     lifecycle {
-#       delete_after = 35
-#     }
-#   }
-# }
+    lifecycle {
+      delete_after = 35
+    }
+  }
+}
