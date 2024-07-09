@@ -5,7 +5,7 @@ locals {
 
   versioning                       = var.enable_backup ? true : var.versioning
 
-  # enable_bucket_ownership_controls = var.acl != "private" || var.backup_restore ? "BucketOwnerPreferred" : "BucketOwnerEnforced"
+  disable_acl                      = var.disable_acl ? "BucketOwnerEnforced" : "BucketOwnerPreferred"
 
   # Tags
   default_tags = {
@@ -143,6 +143,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
+  count      = var.disable_acl ? 0 : 1
   bucket     = aws_s3_bucket.bucket.id
   acl        = var.acl
   depends_on = [aws_s3_bucket_ownership_controls.enable_acl]
@@ -151,7 +152,7 @@ resource "aws_s3_bucket_acl" "s3_bucket_acl" {
 resource "aws_s3_bucket_ownership_controls" "enable_acl" {
   bucket = aws_s3_bucket.bucket.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = local.disable_acl
   }
 }
 

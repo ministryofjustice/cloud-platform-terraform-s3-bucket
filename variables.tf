@@ -61,6 +61,12 @@ variable "enable_allow_block_pub_access" {
   type        = bool
 }
 
+variable "disable_acl" {
+  description = "Set to true to disable ACLs"
+  default     = false
+  type        = bool
+}
+
 variable "enable_backup" {
   description = "Enable to use AWS Backup to backup the bucket"
   default     = false
@@ -77,12 +83,6 @@ variable "backup_retention_days" {
   description = "The number of days a backup is kept for"
   default     = 35
   type        = number
-}
-
-variable "backup_restore" {
-  description = "Enable so restore from backup is able to be performed (enables ACLs)"
-  default     = false
-  type        = bool
 }
 
 ########
