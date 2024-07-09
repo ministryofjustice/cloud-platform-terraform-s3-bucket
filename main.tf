@@ -1,11 +1,11 @@
 locals {
   # Generic configuration
-  bucket_name                      = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
-  s3_bucket_arn                    = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
+  bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 
-  versioning                       = var.enable_backup ? true : var.versioning
+  versioning    = var.enable_backup ? true : var.versioning
 
-  disable_acl                      = var.disable_acl ? "BucketOwnerEnforced" : "BucketOwnerPreferred"
+  acl_enable    = var.disable_acl ? "BucketOwnerEnforced" : "BucketOwnerPreferred"
 
   # Tags
   default_tags = {
@@ -152,7 +152,7 @@ resource "aws_s3_bucket_acl" "s3_bucket_acl" {
 resource "aws_s3_bucket_ownership_controls" "enable_acl" {
   bucket = aws_s3_bucket.bucket.id
   rule {
-    object_ownership = local.disable_acl
+    object_ownership = local.acl_enable
   }
 }
 
