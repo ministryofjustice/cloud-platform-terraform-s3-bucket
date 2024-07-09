@@ -1,9 +1,11 @@
 locals {
   # Generic configuration
-  bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
-  s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
+  bucket_name                      = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
+  s3_bucket_arn                    = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 
-  versioning = var.enable_backup ? true : var.versioning
+  versioning                       = var.enable_backup ? true : var.versioning
+
+  enable_bucket_ownership_controls = var.acl != "private" || var.backup_restore ? "BucketOwnerPreferred" : "BucketOwnerEnforced"
 
   # Tags
   default_tags = {
@@ -279,9 +281,8 @@ resource "aws_backup_selection" "s3" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "enable_acl" {
-  count  = var.backup_restore ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = local.enable_bucket_ownership_controls
   }
 }
