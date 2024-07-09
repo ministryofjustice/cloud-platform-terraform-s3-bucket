@@ -259,10 +259,10 @@ resource "aws_backup_plan" "s3_backup_plan" {
   rule {
     rule_name         = "DailyBackups"
     target_vault_name = aws_backup_vault.bucket_vault[0].name
-    schedule          = "cron(0 5 ? * * *)" 
+    schedule          = var.backup_schedule
 
     lifecycle {
-      delete_after = 35
+      delete_after = var.backup_retention_days
     }
   }
 }
@@ -277,8 +277,6 @@ resource "aws_backup_selection" "s3" {
     aws_s3_bucket.bucket.arn
   ]
 }
-
-
 
 resource "aws_s3_bucket_ownership_controls" "enable_acl" {
   count  = var.backup_restore ? 1 : 0

@@ -67,6 +67,18 @@ variable "enable_backup" {
   type        = bool
 }
 
+variable "backup_schedule" {
+  description = "Cron for setting the backup schedule"
+  default     = "cron(0 5 ? * * *)"
+  type        = string
+}
+
+variable "backup_retention_days" {
+  description = "The number of days a backup is kept for"
+  default     = 35
+  type        = number
+}
+
 variable "backup_restore" {
   description = "Enable so restore from backup is able to be performed (enables ACLs)"
   default     = false
