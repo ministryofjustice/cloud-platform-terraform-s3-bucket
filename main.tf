@@ -109,6 +109,11 @@ resource "aws_s3_bucket" "bucket" {
       max_age_seconds = lookup(cors_rule.value, "max_age_seconds", null)
     }
   }
+
+  versioning {
+    enabled = local.versioning
+  }
+    
   dynamic "logging" {
     for_each = var.logging_enabled == true ? [1] : []
     content {
@@ -142,12 +147,12 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "encryption_config
   }
 }
 
-resource "aws_s3_bucket_versioning" "versioning" {
-  bucket = aws_s3_bucket.bucket.id
-  versioning_configuration {
-    status = local.versioning
-  }
-}
+# resource "aws_s3_bucket_versioning" "versioning" {
+#   bucket = aws_s3_bucket.bucket.id
+#   versioning_configuration {
+#     status = local.versioning
+#   }
+# }
 
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
   count      = var.disable_acl ? 0 : 1
