@@ -67,6 +67,12 @@ variable "enable_backup" {
   type        = bool
 }
 
+variable "backup_restore" {
+  description = "Enable so restore from backup is able to be performed (enables ACLs)"
+  default     = false
+  type        = bool
+}
+
 ########
 # Tags #
 ########

@@ -280,9 +280,10 @@ resource "aws_backup_selection" "s3" {
 
 
 
-resource "aws_s3_bucket_ownership_controls" "example" {
+resource "aws_s3_bucket_ownership_controls" "enable_acl" {
+  count  = var.backup_restore ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
 }
