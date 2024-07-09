@@ -43,7 +43,6 @@ locals {
 # v4.0.0 release.
 resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
-  acl           = var.acl
   force_destroy = "true"
   policy        = local.bucket_policy
 
@@ -142,6 +141,20 @@ resource "aws_s3_bucket" "bucket" {
     infrastructure-support = var.infrastructure_support
   }
 }
+
+resource "aws_s3_bucket_acl" "s3_bucket_acl" {
+  bucket     = aws_s3_bucket.bucket.id
+  acl        = var.acl
+  depends_on = [aws_s3_bucket_ownership_controls.enable_acl]
+}
+
+resource "aws_s3_bucket_ownership_controls" "enable_acl" {
+  bucket = aws_s3_bucket.bucket.id
+  rule {
+    object_ownership = local.enable_bucket_ownership_controls
+  }
+}
+
 
 ##############################
 # Create public access block #
@@ -278,11 +291,4 @@ resource "aws_backup_selection" "s3" {
   resources = [
     aws_s3_bucket.bucket.arn
   ]
-}
-
-resource "aws_s3_bucket_ownership_controls" "enable_acl" {
-  bucket = aws_s3_bucket.bucket.id
-  rule {
-    object_ownership = local.enable_bucket_ownership_controls
-  }
 }
