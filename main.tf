@@ -277,3 +277,12 @@ resource "aws_backup_selection" "s3" {
     aws_s3_bucket.bucket.arn
   ]
 }
+
+
+
+resource "aws_s3_bucket_ownership_controls" "example" {
+  bucket = aws_s3_bucket.bucket.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
