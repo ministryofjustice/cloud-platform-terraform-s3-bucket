@@ -145,6 +145,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_s3_bucket_acl" "s3_bucket_acl" {
   bucket     = aws_s3_bucket.bucket.id
   acl        = var.acl
+  depends_on = [aws_s3_bucket_ownership_controls.enable_acl]
 }
 
 resource "aws_s3_bucket_ownership_controls" "enable_acl" {
