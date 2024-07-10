@@ -134,6 +134,7 @@ resource "aws_s3_bucket" "bucket" {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
+  count  = var.bucket_policy == "" ? 0 : 1
   bucket = aws_s3_bucket.bucket.id
   policy = jsonencode(local.bucket_policy)
 }
