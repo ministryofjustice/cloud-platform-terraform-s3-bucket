@@ -33,7 +33,7 @@ resource "random_id" "id" {
 # Generate policies #
 #####################
 locals {
-  bucket_policy = jsonencode(replace(var.bucket_policy, "$${bucket_arn}", "arn:aws:s3:::${local.bucket_name}"))
+  bucket_policy = replace(var.bucket_policy, "$${bucket_arn}", "arn:aws:s3:::${local.bucket_name}")
 }
 
 #################
@@ -133,12 +133,6 @@ resource "aws_s3_bucket" "bucket" {
     infrastructure-support = var.infrastructure_support
   }
 }
-
-# resource "aws_s3_bucket_policy" "bucket_policy" {
-#   count  = var.bucket_policy == "" ? 0 : 1
-#   bucket = aws_s3_bucket.bucket.id
-#   policy = local.bucket_policy
-# }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption_configuration" {
   bucket = aws_s3_bucket.bucket.id
