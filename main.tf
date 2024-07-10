@@ -44,7 +44,6 @@ locals {
 resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
   force_destroy = "true"
-  policy        = local.bucket_policy
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
@@ -111,14 +110,6 @@ resource "aws_s3_bucket" "bucket" {
     }
   }
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
   versioning {
     enabled = local.versioning
   }
@@ -139,6 +130,20 @@ resource "aws_s3_bucket" "bucket" {
     environment-name       = var.environment_name
     owner                  = var.team_name
     infrastructure-support = var.infrastructure_support
+  }
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.bucket.id
+  policy = jsonencode(local.bucket_policy)
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption_configuration" {
+  bucket = aws_s3_bucket.bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
