@@ -33,7 +33,7 @@ resource "random_id" "id" {
 # Generate policies #
 #####################
 locals {
-  bucket_policy = replace(var.bucket_policy, "$${bucket_arn}", "arn:aws:s3:::${local.bucket_name}")
+  bucket_policy = jsonencode(replace(var.bucket_policy, "$${bucket_arn}", "arn:aws:s3:::${local.bucket_name}"))
 }
 
 #################
