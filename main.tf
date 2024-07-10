@@ -136,7 +136,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_s3_bucket_policy" "bucket_policy" {
   count  = var.bucket_policy == "" ? 0 : 1
   bucket = aws_s3_bucket.bucket.id
-  policy = jsonencode(local.bucket_policy)
+  policy = local.bucket_policy
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption_configuration" {
