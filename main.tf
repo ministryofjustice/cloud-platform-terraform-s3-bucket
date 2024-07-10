@@ -44,6 +44,7 @@ locals {
 resource "aws_s3_bucket" "bucket" {
   bucket        = local.bucket_name
   force_destroy = "true"
+  policy        = local.bucket_policy
 
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rule
@@ -133,11 +134,11 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  count  = var.bucket_policy == "" ? 0 : 1
-  bucket = aws_s3_bucket.bucket.id
-  policy = local.bucket_policy
-}
+# resource "aws_s3_bucket_policy" "bucket_policy" {
+#   count  = var.bucket_policy == "" ? 0 : 1
+#   bucket = aws_s3_bucket.bucket.id
+#   policy = local.bucket_policy
+# }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "encryption_configuration" {
   bucket = aws_s3_bucket.bucket.id
