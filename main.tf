@@ -272,6 +272,7 @@ resource "aws_iam_role" "s3_backup" {
 resource "aws_backup_plan" "s3_backup_plan" {
   name        = "${local.bucket_name}_s3_backup_plan"
   count       = var.enable_backup ? 1 : 0
+  tags        = local.default_tags
 
   rule {
     rule_name         = "DailyBackups"
