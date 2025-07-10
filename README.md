@@ -244,6 +244,36 @@ For further guidance on using IRSA, for example accessing AWS buckets in differe
 
 [Cloud Platform service pod for AWS CLI access]https://user-guide.cloud-platform.service.justice.gov.uk/documentation/other-topics/cloud-platform-service-pod.html)
 
+#### OIDC with GitHub Actions
+
+This module also supports using OIDC to access the S3 bucket from GitHub Actions workflows.
+
+To use this feature, pass the optional `oidc_providers` and `github_repositories` inputs, including the `github_environments` input if your Actions pipelines are leveraging GitHub environments:
+
+```
+module "s3" {
+  ...
+  
+  oidc_providers = ["github"]
+  github_repositories = ["my-moj-repo"]
+  github_environments = ["my-repo-environment"]
+```
+
+This will create the folllowing GitHub Actions secrets and variables:
+
+- S3_ROLE_TO_ASSUME
+- S3_BUCKET_NAME
+- S3_REGION
+
+You can also apply a prefix to these secrets and variables by using the `github_actions_prefix` input, for example:
+
+```
+module "s3" {
+  ...
+  
+  github_actions_prefix = "GH_ACTIONS_CACHE_"
+```
+
 See the [examples/](examples/) folder for more information.
 
 <!-- BEGIN_TF_DOCS -->
