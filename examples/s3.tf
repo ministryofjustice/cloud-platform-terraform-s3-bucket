@@ -113,15 +113,15 @@ module "s3_bucket" {
   */
 
   /*
-   * The following are exampls of bucket and user policies. They are treated as
+   * The following are examples of bucket and user policies. They are treated as
    * templates. Currently, the only available variable is `$${bucket_arn}`.
    *
    */
 
   /*
- * Allow a user (foobar) from another account (012345678901) to get objects from
- * this bucket.
- *
+   * Allow a user (foobar) from another account (012345678901) to get objects from
+   * this bucket.
+   *
 
    bucket_policy = <<EOF
 {
@@ -142,9 +142,20 @@ module "s3_bucket" {
   ]
 }
 EOF
+*/
+
+  /*
+   * OIDC for GitHub Actions
+   * This allows GitHub Actions to access the S3 bucket using OIDC.
+   *
+   *
+  oidc_providers = ["github"]
+  github_repositories = ["my-moj-repo"]
+  github_environments = ["dev"]   # If you're using GH Actions environments
 
 */
 }
+
 
 
 resource "kubernetes_secret" "s3_bucket" {
