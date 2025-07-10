@@ -17,3 +17,8 @@ output "irsa_policy_arn" {
   description = "IAM policy ARN for access to the S3 bucket"
   value       = aws_iam_policy.irsa.arn
 }
+
+output "github_oidc_role_arn" {
+  description = "IAM role ARN for access to the S3 bucket from GitHub via OIDC"
+  value       = aws_iam_role.github[*].arn
+}

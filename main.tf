@@ -3,6 +3,28 @@ locals {
   bucket_name   = var.bucket_name == "" ? "cloud-platform-${random_id.id.hex}" : var.bucket_name
   s3_bucket_arn = "arn:aws:s3:::${aws_s3_bucket.bucket.id}"
 
+
+  # OIDC configuration
+  oidc_providers = {
+    github = "token.actions.githubusercontent.com"
+  }
+  enable_github = contains(var.oidc_providers, "github")
+  github_repos  = toset(var.github_repositories)
+  github_envs   = toset(var.github_environments)
+  github_repo_envs = {
+    for pair in setproduct(local.github_repos, local.github_envs) :
+    "${pair[0]}.${pair[1]}" => {
+      repository  = pair[0]
+      environment = pair[1]
+    }
+  }
+  github_actions_prefix = upper(var.github_actions_prefix)
+  github_variable_names = {
+    ROLE_TO_ASSUME = join("_", compact([local.github_actions_prefix, "S3_ROLE_TO_ASSUME"]))
+    REGION         = join("_", compact([local.github_actions_prefix, "S3_REGION"]))
+    BUCKET_NAME    = join("_", compact([local.github_actions_prefix, "S3_BUCKET_NAME"]))
+  }
+
   # Tags
   default_tags = {
     # Mandatory
@@ -208,4 +230,113 @@ resource "aws_iam_policy" "irsa" {
   path   = "/cloud-platform/s3/"
   policy = data.aws_iam_policy_document.irsa.json
   tags   = local.default_tags
+}
+
+
+####################
+# OIDC integration #
+####################
+data "aws_region" "current" {}
+
+# GitHub: OIDC provider
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://${local.oidc_providers.github}"
+}
+
+# GitHub: Assume role policy
+# See: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services#adding-the-identity-provider-to-aws
+data "aws_iam_policy_document" "github" {
+  version = "2012-10-17"
+
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [data.aws_iam_openid_connect_provider.github.arn]
+    }
+
+    condition {
+      test     = (length(local.github_repos) == 1) ? "StringLike" : "ForAnyValue:StringLike"
+      variable = "${local.oidc_providers.github}:sub"
+      values   = formatlist("repo:ministryofjustice/%s:*", local.github_repos)
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${local.oidc_providers.github}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+  }
+}
+
+# IAM role and policy attachment for OIDC
+resource "aws_iam_role" "github" {
+  count = local.enable_github ? 1 : 0
+
+  name               = "cloud-platform-oidc-github-${random_id.id.hex}"
+  assume_role_policy = data.aws_iam_policy_document.github.json
+
+  tags = local.default_tags
+}
+
+resource "aws_iam_role_policy_attachment" "github" {
+  count = local.enable_github ? 1 : 0
+
+  role       = aws_iam_role.github[0].name
+  policy_arn = aws_iam_policy.irsa.arn
+}
+
+# Actions
+resource "github_actions_secret" "github_role_to_assume" {
+  for_each = (length(var.github_environments) == 0 && local.enable_github) ? local.github_repos : []
+
+  repository      = each.value
+  secret_name     = local.github_variable_names["ROLE_TO_ASSUME"]
+  plaintext_value = aws_iam_role.github[0].arn
+}
+
+resource "github_actions_variable" "github_region" {
+  for_each = (length(var.github_environments) == 0 && local.enable_github) ? local.github_repos : []
+
+  repository    = each.value
+  variable_name = local.github_variable_names["REGION"]
+  value         = data.aws_region.current.name
+}
+
+resource "github_actions_variable" "github_repository" {
+  for_each = (length(var.github_environments) == 0 && local.enable_github) ? local.github_repos : []
+
+  repository    = each.value
+  variable_name = local.github_variable_names["BUCKET_NAME"]
+  value         = aws_s3_bucket.bucket.id
+}
+
+# Environments
+resource "github_actions_environment_secret" "github_role_to_assume" {
+  for_each = local.enable_github ? local.github_repo_envs : {}
+
+  repository      = each.value.repository
+  environment     = each.value.environment
+  secret_name     = local.github_variable_names["ROLE_TO_ASSUME"]
+  plaintext_value = aws_iam_role.github[0].arn
+}
+
+resource "github_actions_environment_variable" "github_region" {
+  for_each = local.enable_github ? local.github_repo_envs : {}
+
+  repository    = each.value.repository
+  environment   = each.value.environment
+  variable_name = local.github_variable_names["REGION"]
+  value         = data.aws_region.current.name
+}
+
+resource "github_actions_environment_variable" "github_repository" {
+  for_each = local.enable_github ? local.github_repo_envs : {}
+
+  repository    = each.value.repository
+  environment   = each.value.environment
+  variable_name = local.github_variable_names["BUCKET_NAME"]
+  value         = aws_s3_bucket.bucket.id
 }

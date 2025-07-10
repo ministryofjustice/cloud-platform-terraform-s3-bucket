@@ -98,3 +98,36 @@ variable "infrastructure_support" {
   description = "The team responsible for managing the infrastructure. Should be of the form <team-name> (<team-email>)"
   type        = string
 }
+
+########
+# OIDC #
+########
+variable "oidc_providers" {
+  description = "OIDC providers for this S3 bucket, valid values are \"github\""
+  type        = list(string)
+  default     = []
+}
+
+variable "github_actions_prefix" {
+  description = "String prefix for GitHub Actions variable and secrets key"
+  type        = string
+  default     = ""
+}
+
+variable "github_repositories" {
+  description = "GitHub repositories in which to create github actions secrets"
+  default     = []
+  type        = list(string)
+
+  validation {
+    ## Ensure that the GitHub repository names cannot contain a url
+    condition     = alltrue([for repo in var.github_repositories : can(regex("^[^/]+$", repo))])
+    error_message = "GitHub repository name cannot contain a url, please only enter the repository name"
+  }
+}
+
+variable "github_environments" {
+  description = "GitHub environment in which to create github actions secrets"
+  type        = list(string)
+  default     = []
+}
