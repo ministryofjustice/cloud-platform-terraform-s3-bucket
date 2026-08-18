@@ -278,7 +278,7 @@ See the [examples/](examples/) folder for more information.
 
 ##### GitHub OIDC subject claims
 
-GitHub changed the format of the OIDC token subject (`sub`) claim. Repositories created after 15 July 2026, along with repositories renamed or transferred after that date, now use an immutable subject that includes the numeric owner ID and repository ID. The subject changes from `repo:ministryofjustice/<repo>:...` to `repo:ministryofjustice@<owner_id>/<repo>@<repo_id>:...`.
+GitHub changed the format of the OIDC token subject (`sub`) claim. Repositories created after 15 July 2026, along with repositories renamed or transferred after that date, now use an immutable subject that includes the numeric owner ID and repository ID. The subject changes from `repo:ministryofjustice/<repo>:.........` to `repo:ministryofjustice@<owner_id>/<repo>@<repo_id>:.......`.
 
 The IAM role trust policy created by this module matches both formats, so GitHub Actions authentication keeps working whether your repository uses the older name-based subject or the newer immutable one. You do not need to change anything in your module call.
 
